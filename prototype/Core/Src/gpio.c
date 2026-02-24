@@ -60,7 +60,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED_G_Pin|LED_B_Pin|C_D2_Pin|LED_R_Pin
-                          |I2C1_SCL_Pin|I2C1_SDA_Pin, GPIO_PIN_RESET);
+                          |I2C1_SCL_Pin|I2C1_SDA_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, C_WEN_Pin|USB_E_Pin, GPIO_PIN_RESET);
