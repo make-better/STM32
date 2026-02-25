@@ -217,8 +217,17 @@ void StartTask03(void *argument)
   /* Infinite loop */
   for(;;)
   {
-		HAL_GPIO_TogglePin(LED_B_GPIO_Port,LED_B_Pin);
-    osDelay(500);
+		if(HAL_GPIO_ReadPin(KEY1_GPIO_Port,KEY1_Pin) == 0)
+		{
+			HAL_GPIO_WritePin(LED_B_GPIO_Port,LED_B_Pin,0);
+		}
+		else
+		{
+			HAL_GPIO_WritePin(LED_B_GPIO_Port,LED_B_Pin,1);
+		}
+		
+		
+    osDelay(5);
   }
   /* USER CODE END StartTask03 */
 }
