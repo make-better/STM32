@@ -29,7 +29,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "bsp_exti.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -90,7 +90,7 @@ int main(void)
 //	SystemClockHSI_Config();
 
   /* USER CODE BEGIN SysInit */
-	HAL_RCC_MCOConfig(RCC_MCO1, RCC_MCO1SOURCE_PLLCLK, RCC_MCODIV_1);
+//	HAL_RCC_MCOConfig(RCC_MCO1, RCC_MCO1SOURCE_PLLCLK, RCC_MCODIV_1);
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -102,7 +102,7 @@ int main(void)
 //  MX_SDIO_MMC_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-
+    EXTI_Key_Config();
   /* USER CODE END 2 */
 
   /* Init scheduler */
