@@ -230,9 +230,9 @@ void StartTask03(void *argument)
 //		{
 //			HAL_GPIO_WritePin(LED_B_GPIO_Port,LED_B_Pin,1);
 //		}
-		HAL_GPIO_TogglePin(LED_B_GPIO_Port,LED_B_Pin);
-		Delay(1000000);
-    osDelay(1);
+//		HAL_GPIO_TogglePin(LED_B_GPIO_Port,LED_B_Pin);
+//		Delay(1000000);
+    osDelay(10);
   }
   /* USER CODE END StartTask03 */
 }
