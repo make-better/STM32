@@ -204,6 +204,11 @@ void StartTask02(void *argument)
   /* USER CODE END StartTask02 */
 }
 
+void Delay(__IO uint32_t nCount)
+{
+    for (; nCount != 0; nCount--);
+}
+
 /* USER CODE BEGIN Header_StartTask03 */
 /**
 * @brief Function implementing the myTask03 thread.
@@ -217,17 +222,17 @@ void StartTask03(void *argument)
   /* Infinite loop */
   for(;;)
   {
-		if(HAL_GPIO_ReadPin(KEY1_GPIO_Port,KEY1_Pin) == 0)
-		{
-			HAL_GPIO_WritePin(LED_B_GPIO_Port,LED_B_Pin,0);
-		}
-		else
-		{
-			HAL_GPIO_WritePin(LED_B_GPIO_Port,LED_B_Pin,1);
-		}
-		
-		
-    osDelay(5);
+//		if(HAL_GPIO_ReadPin(KEY1_GPIO_Port,KEY1_Pin) == 0)
+//		{
+//			HAL_GPIO_WritePin(LED_B_GPIO_Port,LED_B_Pin,0);
+//		}
+//		else
+//		{
+//			HAL_GPIO_WritePin(LED_B_GPIO_Port,LED_B_Pin,1);
+//		}
+		HAL_GPIO_TogglePin(LED_B_GPIO_Port,LED_B_Pin);
+		Delay(1000000);
+    osDelay(1);
   }
   /* USER CODE END StartTask03 */
 }
