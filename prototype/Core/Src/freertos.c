@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -215,10 +215,12 @@ void Delay(__IO uint32_t nCount)
 * @param argument: Not used
 * @retval None
 */
+uint8_t buff[] = "hello world\r\n";
 /* USER CODE END Header_StartTask03 */
 void StartTask03(void *argument)
 {
   /* USER CODE BEGIN StartTask03 */
+    
   /* Infinite loop */
   for(;;)
   {
@@ -232,7 +234,8 @@ void StartTask03(void *argument)
 //		}
 //		HAL_GPIO_TogglePin(LED_B_GPIO_Port,LED_B_Pin);
 //		Delay(1000000);
-    osDelay(10);
+//      printf("hello world\r\n");
+    osDelay(2000);
   }
   /* USER CODE END StartTask03 */
 }
