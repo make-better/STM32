@@ -1,7 +1,13 @@
 #include "bsp_dma.h"
 #include "stdio.h"
+#include "main.h"
 
 DMA_HandleTypeDef DMA_Handle;
+DMA_HandleTypeDef DMA_UART1_TX_Handle;
+DMA_HandleTypeDef DMA_UART1_RX_Handle;
+
+
+extern UART_HandleTypeDef huart1;
 
 const uint32_t aSRC_Const_Buffer[BUFFER_SIZE] = {
     0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
@@ -54,4 +60,45 @@ uint16_t DMA_Test(void)
     while (__HAL_DMA_GET_FLAG(&DMA_Handle,DMA_FLAG_TC1)==DISABLE) {
      }
     return BufferCmp((uint32_t*)aSRC_Const_Buffer, (uint32_t*)aDST_Buffer, BUFFER_SIZE);
+}
+
+void DMA_UART1_Config(void)
+{
+    __DMA1_CLK_ENABLE();
+    
+    DMA_UART1_TX_Handle.Instance = DMA1_Channel4;
+    DMA_UART1_TX_Handle.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    DMA_UART1_TX_Handle.Init.PeriphInc = DMA_PINC_DISABLE;
+    DMA_UART1_TX_Handle.Init.MemInc = DMA_MINC_ENABLE;
+    DMA_UART1_TX_Handle.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    DMA_UART1_TX_Handle.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    DMA_UART1_TX_Handle.Init.Mode = DMA_NORMAL;
+    DMA_UART1_TX_Handle.Init.Priority = DMA_PRIORITY_MEDIUM;
+    
+    if (HAL_DMA_Init(&DMA_UART1_TX_Handle) != HAL_OK)
+    {
+      Error_Handler();
+    }
+    __HAL_LINKDMA(&huart1, hdmatx, DMA_UART1_TX_Handle);
+    HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 1, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
+    
+    DMA_UART1_RX_Handle.Instance = DMA1_Channel5;
+    DMA_UART1_RX_Handle.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    DMA_UART1_RX_Handle.Init.PeriphInc = DMA_PINC_DISABLE;
+    DMA_UART1_RX_Handle.Init.MemInc = DMA_MINC_ENABLE;
+    DMA_UART1_RX_Handle.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    DMA_UART1_RX_Handle.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    DMA_UART1_RX_Handle.Init.Mode = DMA_NORMAL;
+    DMA_UART1_RX_Handle.Init.Priority = DMA_PRIORITY_MEDIUM;
+    
+    if (HAL_DMA_Init(&DMA_UART1_RX_Handle) != HAL_OK)
+    {
+      Error_Handler();
+    }
+    __HAL_LINKDMA(&huart1, hdmarx, DMA_UART1_RX_Handle);
+    
+  
+    HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 1, 1);
+    HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 }

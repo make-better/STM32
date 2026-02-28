@@ -59,7 +59,8 @@
 extern ADC_HandleTypeDef hadc1;
 extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim1;
-
+extern DMA_HandleTypeDef DMA_UART1_TX_Handle;
+extern DMA_HandleTypeDef DMA_UART1_RX_Handle;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -205,5 +206,34 @@ void USART1_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+
+/**
+  * @brief This function handles DMA1 channel4 global interrupt.
+  */
+void DMA1_Channel4_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel4_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel4_IRQn 0 */
+  HAL_DMA_IRQHandler(&DMA_UART1_TX_Handle);
+  /* USER CODE BEGIN DMA1_Channel4_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel4_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA1 channel5 global interrupt.
+  */
+void DMA1_Channel5_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel5_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel5_IRQn 0 */
+  HAL_DMA_IRQHandler(&DMA_UART1_RX_Handle);
+  /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel5_IRQn 1 */
+}
+
 
 /* USER CODE END 1 */

@@ -157,36 +157,27 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>19</LineNumber>
+          <LineNumber>218</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134231662</Address>
+          <Address>134218800</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\BSP\bsp_usart.c</Filename>
+          <Filename>../Core/Src/stm32f1xx_it.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\prototype\../BSP/bsp_usart.c\19</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>224</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231300</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Core/Src/freertos.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\prototype\../Core/Src/freertos.c\224</Expression>
+          <Expression>\\prototype\../Core/Src/stm32f1xx_it.c\218</Expression>
         </Bp>
       </Breakpoint>
+      <WatchWindow1>
+        <Ww>
+          <count>0</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>huart1</ItemText>
+        </Ww>
+      </WatchWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>

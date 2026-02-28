@@ -13,6 +13,11 @@ extern UART_HandleTypeDef huart1;
 void Led_Ctrl(uint8_t c);
 static uint8_t rx_buff[100] = {0};
 
+#define UART1_BUFFER_SIZE 100
+uint8_t uart1_tx_buffer[UART1_BUFFER_SIZE] = {0};
+uint8_t uart1_rx_buffer[UART1_BUFFER_SIZE] = {0};
+
+
 void The_UART_Callback(UART_HandleTypeDef *huart)
 {
     uint8_t temp = 0;

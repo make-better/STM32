@@ -46,7 +46,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+extern UART_HandleTypeDef huart1;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -216,25 +216,19 @@ void Delay(__IO uint32_t nCount)
 * @param argument: Not used
 * @retval None
 */
-uint8_t buff[] = "hello world\r\n";
+const uint8_t buff[] = "hello world\r\n";
 /* USER CODE END Header_StartTask03 */
 void StartTask03(void *argument)
 {
   /* USER CODE BEGIN StartTask03 */
-   if(DMA_Test() == 0)
-   {
-       printf("dma test ok\r\n");
-   }
-   else
-   {
-       printf("dma test fail\r\n");
-   }
+   DMA_UART1_Config();
   /* Infinite loop */
-  for(;;)
-  {
-      HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
-    osDelay(1000);
-  }
+    for(;;)
+    {
+        HAL_UART_Transmit_DMA(&huart1,buff,sizeof(buff));
+        HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
+        osDelay(1000);
+    }
   /* USER CODE END StartTask03 */
 }
 
