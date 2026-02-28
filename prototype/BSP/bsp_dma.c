@@ -51,7 +51,7 @@ uint8_t BufferCmp(uint32_t *pbuffer1, uint32_t *pbuffer2, uint16_t length)
 uint16_t DMA_Test(void)
 {
     DMA_Config();
-    while (__HAL_DMA_GET_FLAG(&DMA_Handle,DMA_FLAG_TC6)==DISABLE) {
+    while (__HAL_DMA_GET_FLAG(&DMA_Handle,DMA_FLAG_TC1)==DISABLE) {
      }
     return BufferCmp((uint32_t*)aSRC_Const_Buffer, (uint32_t*)aDST_Buffer, BUFFER_SIZE);
 }
