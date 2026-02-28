@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+#include "bsp_dma.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -220,22 +221,19 @@ uint8_t buff[] = "hello world\r\n";
 void StartTask03(void *argument)
 {
   /* USER CODE BEGIN StartTask03 */
-    
+   if(DMA_Test() == 0)
+   {
+       printf("dma test ok\r\n");
+   }
+   else
+   {
+       printf("dma test fail\r\n");
+   }
   /* Infinite loop */
   for(;;)
   {
-//		if(HAL_GPIO_ReadPin(KEY1_GPIO_Port,KEY1_Pin) == 0)
-//		{
-//			HAL_GPIO_WritePin(LED_B_GPIO_Port,LED_B_Pin,0);
-//		}
-//		else
-//		{
-//			HAL_GPIO_WritePin(LED_B_GPIO_Port,LED_B_Pin,1);
-//		}
-//		HAL_GPIO_TogglePin(LED_B_GPIO_Port,LED_B_Pin);
-//		Delay(1000000);
-//      printf("hello world\r\n");
-    osDelay(2000);
+      HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
+    osDelay(1000);
   }
   /* USER CODE END StartTask03 */
 }
