@@ -1,5 +1,10 @@
 #ifndef __BSP_EXTI_H__
 #define __BSP_EXTI_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_cortex.h"
 
@@ -14,4 +19,9 @@
 #define KEY2_IRQHandler         EXTI15_10_IRQHandler
 
 void EXTI_Key_Config(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

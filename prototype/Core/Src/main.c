@@ -26,7 +26,7 @@
 #include "usb.h"
 #include "gpio.h"
 #include "fsmc.h"
-
+#include "i2c.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bsp_exti.h"
@@ -97,6 +97,7 @@ int main(void)
   MX_GPIO_Init();
   MX_ADC1_Init();
   MX_USART1_UART_Init();
+  MX_I2C1_Init();
 //  MX_USB_PCD_Init();
 //  MX_FSMC_Init();
 //  MX_SDIO_MMC_Init();

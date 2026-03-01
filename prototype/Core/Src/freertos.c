@@ -27,6 +27,9 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "bsp_dma.h"
+#include "bsp_i2c.h"
+#include "i2c.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -217,15 +220,27 @@ void Delay(__IO uint32_t nCount)
 * @retval None
 */
 const uint8_t buff[] = "hello world\r\n";
+uint8_t eeprom_data[1] = {1};
+uint8_t eeprom_read_data;
 /* USER CODE END Header_StartTask03 */
 void StartTask03(void *argument)
 {
   /* USER CODE BEGIN StartTask03 */
    DMA_UART1_Config();
+    
+    
   /* Infinite loop */
     for(;;)
     {
-        HAL_UART_Transmit_DMA(&huart1,buff,sizeof(buff));
+//        HAL_UART_Transmit_DMA(&huart1,buff,sizeof(buff));
+        I2C_EE_ByteWrite(eeprom_data, 0);
+        
+        if(HAL_OK == I2C_EE_BufferRead(&eeprom_read_data, 0, 1))
+        {
+            printf("EEPROM read back :0x%x\r\n",eeprom_read_data);
+            eeprom_data[0]++;
+        }
+        
         HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
         osDelay(1000);
     }
