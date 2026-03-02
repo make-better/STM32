@@ -26,7 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
-#include "bsp_dma.h"
+
 #include "bsp_i2c.h"
 #include "i2c.h"
 
@@ -69,7 +69,7 @@ const osThreadAttr_t myTask02_attributes = {
 osThreadId_t myTask03Handle;
 const osThreadAttr_t myTask03_attributes = {
   .name = "myTask03",
-  .stack_size = 128 * 4,
+  .stack_size = 128 * 8,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for Timer_Sys_Run */
@@ -219,26 +219,25 @@ void Delay(__IO uint32_t nCount)
 * @param argument: Not used
 * @retval None
 */
-const uint8_t buff[] = "hello world\r\n";
-uint8_t eeprom_data[1] = {1};
-uint8_t eeprom_read_data;
+
+#define EEPROM_DEV_ADDR 0xa0
 /* USER CODE END Header_StartTask03 */
 void StartTask03(void *argument)
 {
   /* USER CODE BEGIN StartTask03 */
-   DMA_UART1_Config();
-    
+   
     
   /* Infinite loop */
     for(;;)
     {
-//        HAL_UART_Transmit_DMA(&huart1,buff,sizeof(buff));
-        I2C_EE_ByteWrite(eeprom_data, 0);
         
-        if(HAL_OK == I2C_EE_BufferRead(&eeprom_read_data, 0, 1))
+        if(i2c_check_device(EEPROM_DEV_ADDR))
         {
-            printf("EEPROM read back :0x%x\r\n",eeprom_read_data);
-            eeprom_data[0]++;
+            HAL_UART_Transmit_DMA(&huart1, (uint8_t*)"ok\r\n", sizeof("ok\r\n"));
+        }
+        else
+        {
+            HAL_UART_Transmit_DMA(&huart1, (uint8_t*)"fail\r\n", sizeof("fail\r\n"));
         }
         
         HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);

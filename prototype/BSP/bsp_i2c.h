@@ -13,6 +13,8 @@ extern "C" {
 uint32_t I2C_EE_ByteWrite(uint8_t *pBuffer, uint8_t WriteAddr);
 uint32_t I2C_EE_BufferRead(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead);
 
+void I2C_By_GPIO_Init(void);
+uint8_t i2c_check_device(uint8_t devAddr);
 #ifdef __cplusplus
 }
 #endif

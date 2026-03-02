@@ -30,6 +30,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bsp_exti.h"
+#include "bsp_i2c.h"
+#include "bsp_dma.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -97,7 +99,9 @@ int main(void)
   MX_GPIO_Init();
   MX_ADC1_Init();
   MX_USART1_UART_Init();
-  MX_I2C1_Init();
+  DMA_UART1_Config();
+//  MX_I2C1_Init();
+    I2C_By_GPIO_Init();
 //  MX_USB_PCD_Init();
 //  MX_FSMC_Init();
 //  MX_SDIO_MMC_Init();
