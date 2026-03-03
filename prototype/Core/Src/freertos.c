@@ -26,7 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
-
+#include "bsp_usart.h"
 #include "bsp_i2c.h"
 #include "i2c.h"
 
@@ -220,24 +220,56 @@ void Delay(__IO uint32_t nCount)
 * @retval None
 */
 
-#define EEPROM_DEV_ADDR 0xa0
+uint8_t buff_r[57] = {0};
+uint8_t buff_w[57] = {0};
+uint8_t ret = 0;
 /* USER CODE END Header_StartTask03 */
 void StartTask03(void *argument)
 {
   /* USER CODE BEGIN StartTask03 */
-   
-    
+    for(int i = 0; i < 57; i++)
+    {
+        buff_w[i] = i;
+    }
+    ret = i2c_write_bytes(buff_w,EEPROM_ADDRESS,13,57);
+    if(ret == 0)
+    {
+        debug_info("eeprom write ok\r\n");
+    }
+    else
+    {
+        debug_info("eeprom write fail\r\n");
+    }
+//    osDelay(1000);
+    ret = i2c_read_bytes(buff_r,EEPROM_ADDRESS,13,57);
+    if(ret == 0)
+    {
+        debug_info("eeprom read ok\r\n");
+    }
+    else
+    {
+        debug_info("eeprom read fail\r\n");
+    }
+//    osDelay(1000);
+    for(int i = 0; i < 57; i++)
+    {
+        if(buff_w[i] != buff_r[i])
+        {
+            debug_info("eeprom readback data 0x:%x w:0x%x r:0x%x\r\n",i, buff_w[i],buff_r[i]);
+            break;
+        }
+    }
   /* Infinite loop */
     for(;;)
     {
         
-        if(i2c_check_device(EEPROM_DEV_ADDR))
+        if(i2c_check_device(EEPROM_ADDRESS) == 0)
         {
-            HAL_UART_Transmit_DMA(&huart1, (uint8_t*)"ok\r\n", sizeof("ok\r\n"));
+            debug_info("dev 0x%x online\r\n", EEPROM_ADDRESS);
         }
         else
         {
-            HAL_UART_Transmit_DMA(&huart1, (uint8_t*)"fail\r\n", sizeof("fail\r\n"));
+            debug_info("dev 0x%x offline\r\n", EEPROM_ADDRESS);
         }
         
         HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
