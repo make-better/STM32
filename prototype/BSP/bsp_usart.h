@@ -10,7 +10,7 @@ extern "C" {
 
 void The_UART_Callback(UART_HandleTypeDef *huart);
 
-
+void debug_info(const char *format, ...);
 #ifdef __cplusplus
 }
 #endif
