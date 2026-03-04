@@ -8,7 +8,7 @@ extern "C" {
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_cortex.h"
 
-#define EEPROM_ADDRESS 0X0A
+#define EEPROM_ADDRESS 0XA0
 
 uint32_t I2C_EE_ByteWrite(uint8_t *pBuffer, uint8_t WriteAddr);
 uint32_t I2C_EE_BufferRead(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead);

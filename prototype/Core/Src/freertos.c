@@ -29,7 +29,7 @@
 #include "bsp_usart.h"
 #include "bsp_i2c.h"
 #include "i2c.h"
-
+#include "bsp_spi_flash.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -240,7 +240,7 @@ void StartTask03(void *argument)
     {
         debug_info("eeprom write fail\r\n");
     }
-//    osDelay(1000);
+    osDelay(1000);
     ret = i2c_read_bytes(buff_r,EEPROM_ADDRESS,13,57);
     if(ret == 0)
     {
