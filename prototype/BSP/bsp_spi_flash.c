@@ -1,6 +1,7 @@
 #include "bsp_spi_flash.h"
 #include "spi.h"
 #include "main.h"
+#include "bsp_usart.h"
 
 #define digitalHi(p,i)          {p->BSRR=i;}                    //设置为高电平
 #define digitalLo(p,i)          {p->BSRR=(uint32_t)i << 16;}    //输出低电平
@@ -31,6 +32,21 @@ extern SPI_HandleTypeDef hspi1;
 #define sFLASH_ID 0XEF4017
 #define Dummy_Byte 0xFF
 
+/* WIP(busy)标志，FLASH内部正在写入 */
+#define WIP_FLAG  0x01
+
+#define SPI_FLASH_PER_WRITE_PAGE_SIZE 256
+#define SPI_FLASH_PAGE_SIZE   0x1000
+
+void spi_flash_cs_low(void)
+{
+    HAL_GPIO_WritePin(SPIFLASH_CS_GPIO_Port, SPIFLASH_CS_Pin, 0);
+}
+
+void spi_flash_cs_high(void)
+{
+    HAL_GPIO_WritePin(SPIFLASH_CS_GPIO_Port, SPIFLASH_CS_Pin, 1);
+}
 
 uint32_t spi_flash_read_id(void)
 {
@@ -38,18 +54,291 @@ uint32_t spi_flash_read_id(void)
     uint8_t send[4] = {W25X_JedecDeviceID, Dummy_Byte, Dummy_Byte, Dummy_Byte};
     HAL_StatusTypeDef status = HAL_OK;
     
-    HAL_GPIO_WritePin(SPIFLASH_CS_GPIO_Port, SPIFLASH_CS_Pin, 0);
+    spi_flash_cs_low();
     status = HAL_SPI_TransmitReceive(&hspi1, send, temp, 4, 1000);
-    HAL_GPIO_WritePin(SPIFLASH_CS_GPIO_Port, SPIFLASH_CS_Pin, 0);
+    spi_flash_cs_high();
+    
     if(status != HAL_OK)
     {
-        return 0x0;
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        return 0xffff;
     }
     return temp[1] << 16 | temp[2] << 8 | temp[3];
 }
 
 
+uint8_t spi_flash_write_enable()
+{
+    HAL_StatusTypeDef status = HAL_OK;
+    uint8_t cmd = W25X_WriteEnable;
+    
+    spi_flash_cs_low();
+    status = HAL_SPI_Transmit(&hspi1, &cmd, 1, 1000);
+    spi_flash_cs_high();
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        return 0x01;
+    }
+    return 0;
+}
 
+uint8_t spi_flash_wait_for_write_end(void)
+{
+    HAL_StatusTypeDef status = HAL_OK;
+    uint8_t cmd = W25X_ReadStatusReg;
+    uint8_t flash_status = 0;
+    
+    spi_flash_cs_low();
+    
+    status = HAL_SPI_Transmit(&hspi1, &cmd, 1, 1000);
+    if(status != HAL_OK)
+    {
+        spi_flash_cs_high();
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        return 1;
+    }
+        
+    do
+    {
+        status = HAL_SPI_Receive(&hspi1, &flash_status, 1, 100);
+        if(status != HAL_OK)
+        {
+            spi_flash_cs_high();
+            debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+            return 1;
+        }
+    }while((flash_status & WIP_FLAG) == 1);
+    
+    spi_flash_cs_high();
+    return 0;
+}
 
+uint8_t spi_flash_sector_erease(uint32_t sector_addr)
+{
+    HAL_StatusTypeDef status = HAL_OK;
+    uint8_t cmd = W25X_SectorErase;
+    uint8_t addr[3] = {sector_addr & 0xFF0000, sector_addr & 0xFF00, sector_addr & 0xFF};
+    uint8_t ret = 0;
+    
+    ret = spi_flash_write_enable();
+    if(ret)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    
+    ret = spi_flash_wait_for_write_end();
+    if(ret)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    
+    spi_flash_cs_low();
+    status = HAL_SPI_Transmit(&hspi1, &cmd, 1, 1000);
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    
+    status = HAL_SPI_Transmit(&hspi1, addr, 3, 1000);
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    spi_flash_cs_high();
+    
+    ret = spi_flash_wait_for_write_end();
+    if(ret)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    
+    return 0;
+cmd_fail:
+    spi_flash_cs_high();
+    return 1;
+}
 
+uint8_t spi_flash_page_write(uint8_t *buff, uint32_t write_addr, uint16_t len)
+{
+    uint8_t ret = 0;
+    HAL_StatusTypeDef status = HAL_OK;
+    uint8_t send[4] = {W25X_PageProgram, write_addr & 0xFF0000, write_addr & 0xFF00, write_addr & 0xFF};
+    
+    ret = spi_flash_write_enable();
+    if(ret)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    
+    spi_flash_cs_low();
+    
+    status = HAL_SPI_Transmit(&hspi1, send, 4, 1000);
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    
+    if(len > SPI_FLASH_PER_WRITE_PAGE_SIZE)
+    {
+        len = SPI_FLASH_PER_WRITE_PAGE_SIZE;
+        debug_info("spi_flash_page_write too large\r\n");
+    }
+    
+    status = HAL_SPI_Transmit(&hspi1, buff, len, 1000);
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    spi_flash_cs_high();
+    
+    ret = spi_flash_wait_for_write_end();
+    if(ret)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+cmd_fail:
+    spi_flash_cs_high();
+    return 1;
+}
 
+uint8_t spi_flash_buffer_write(uint8_t *buff, uint32_t write_addr, uint16_t len)
+{
+    uint8_t ret = 0;
+    uint8_t num_of_page = 0, num_of_single = 0, addr = 0, count = 0, temp = 0;
+    /* 数据地址是否页对齐 */
+    addr = write_addr % SPI_FLASH_PAGE_SIZE;
+    /* 差count 个字节可以对其页地址 */
+    count = SPI_FLASH_PAGE_SIZE - addr;
+    /* 可以写多少整页 */
+    num_of_page = len / SPI_FLASH_PAGE_SIZE;
+    /* 不满一页的数据长度 */
+    num_of_single = len % SPI_FLASH_PAGE_SIZE;
+    
+    /* 若刚好页对齐 */
+    if(addr == 0)
+    {
+        /* 若写入数据长度不足整页 */
+        if(num_of_page == 0)
+        {
+            ret = spi_flash_page_write(buff, write_addr, len);
+            if(ret)
+            {
+                debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+                return 1;
+            }
+        }
+        else/* 写入数据大于一整页 */
+        {
+            /* 写入整页数据 */
+            while(num_of_page--)
+            {
+                ret = spi_flash_page_write(buff, write_addr, SPI_FLASH_PAGE_SIZE);
+                if(ret)
+                {
+                    debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+                    return 1;
+                }
+                write_addr += SPI_FLASH_PAGE_SIZE;
+                buff += SPI_FLASH_PAGE_SIZE;
+            }
+            /* 写入不足整页的数据 */
+            if(num_of_single)
+            {
+                ret = spi_flash_page_write(buff, write_addr, num_of_single);
+                if(ret)
+                {
+                    debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+                    return 1;
+                }
+            }
+        }
+    }
+    else/* 若写入地址未对其整页 */
+    {
+        /* 若写入数据长度不足一页 */
+        if(num_of_page == 0)
+        {
+            /* 若当前页写不完数据 */
+            if(num_of_single > count)
+            {
+                /* 写满当前页剩余空间 */
+                temp = num_of_single - count;
+                ret = spi_flash_page_write(buff, write_addr, count);
+                if(ret)
+                {
+                    debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+                    return 1;
+                }
+                write_addr += count;
+                buff += count;
+                /* 写入剩余数据 */
+                ret = spi_flash_page_write(buff, write_addr, temp);
+                if(ret)
+                {
+                    debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+                    return 1;
+                }
+            }
+            else/* 若当前页可写完数据则全部写入 */
+            {
+                ret = spi_flash_page_write(buff, write_addr, len);
+                if(ret)
+                {
+                    debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+                    return 1;
+                }
+            }
+        }
+        else/* 若数据长度超过一页 */
+        {
+            /* 计算地址对齐前的数据长度 */
+            len -= count;
+            num_of_page = len / SPI_FLASH_PAGE_SIZE;
+            num_of_single = len % SPI_FLASH_PAGE_SIZE;
+            /* 先写满当前页剩余空间 */
+            ret = spi_flash_page_write(buff, write_addr, count);
+            if(ret)
+            {
+                debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+                return 1;
+            }
+            /* 对齐地址 */
+            write_addr += count;
+            buff += count;
+            /* 写入整页数据 */
+            while(num_of_page--)
+            {
+                ret = spi_flash_page_write(buff, write_addr, SPI_FLASH_PAGE_SIZE);
+                if(ret)
+                {
+                    debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+                    return 1;
+                }
+                write_addr += SPI_FLASH_PAGE_SIZE;
+                buff += SPI_FLASH_PAGE_SIZE;
+            }
+            /* 写入剩余数据 */
+            if(num_of_single)
+            {
+                ret = spi_flash_page_write(buff, write_addr, num_of_single);
+                if(ret)
+                {
+                    debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+                    return 1;
+                }
+            }
+        }
+    }
+    
+    return 0;
+}

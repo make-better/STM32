@@ -19,6 +19,7 @@ uint8_t i2c_check_device(uint8_t devAddr);
 uint8_t i2c_write_bytes(uint8_t *buff, uint16_t dev_addr, uint16_t address, uint16_t len);
 uint8_t i2c_read_bytes(uint8_t *buff, uint16_t dev_addr, uint16_t address, uint16_t len);
 
+uint8_t i2c_func_test(void);
 #ifdef __cplusplus
 }
 #endif

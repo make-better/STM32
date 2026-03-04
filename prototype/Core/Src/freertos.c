@@ -220,57 +220,17 @@ void Delay(__IO uint32_t nCount)
 * @retval None
 */
 
-uint8_t buff_r[57] = {0};
-uint8_t buff_w[57] = {0};
-uint8_t ret = 0;
+
 /* USER CODE END Header_StartTask03 */
 void StartTask03(void *argument)
 {
   /* USER CODE BEGIN StartTask03 */
-    for(int i = 0; i < 57; i++)
-    {
-        buff_w[i] = i;
-    }
-    ret = i2c_write_bytes(buff_w,EEPROM_ADDRESS,13,57);
-    if(ret == 0)
-    {
-        debug_info("eeprom write ok\r\n");
-    }
-    else
-    {
-        debug_info("eeprom write fail\r\n");
-    }
-    osDelay(1000);
-    ret = i2c_read_bytes(buff_r,EEPROM_ADDRESS,13,57);
-    if(ret == 0)
-    {
-        debug_info("eeprom read ok\r\n");
-    }
-    else
-    {
-        debug_info("eeprom read fail\r\n");
-    }
-//    osDelay(1000);
-    for(int i = 0; i < 57; i++)
-    {
-        if(buff_w[i] != buff_r[i])
-        {
-            debug_info("eeprom readback data 0x:%x w:0x%x r:0x%x\r\n",i, buff_w[i],buff_r[i]);
-            break;
-        }
-    }
+    uint32_t id = 0;
   /* Infinite loop */
     for(;;)
     {
-        
-        if(i2c_check_device(EEPROM_ADDRESS) == 0)
-        {
-            debug_info("dev 0x%x online\r\n", EEPROM_ADDRESS);
-        }
-        else
-        {
-            debug_info("dev 0x%x offline\r\n", EEPROM_ADDRESS);
-        }
+        id = spi_flash_read_id();
+        debug_info("spi flash id : 0x%x\r\n", id);
         
         HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
         osDelay(1000);

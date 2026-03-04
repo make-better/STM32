@@ -1,7 +1,8 @@
 #include "bsp_i2c.h"
 #include "i2c.h"
-#include "stdio.h"
+#include "bsp_usart.h"
 #include "main.h"
+#include "cmsis_os.h"
 
 /*HAL库写入1Byte*/
 uint32_t I2C_EE_ByteWrite(uint8_t *pBuffer, uint8_t WriteAddr)
@@ -11,7 +12,7 @@ uint32_t I2C_EE_ByteWrite(uint8_t *pBuffer, uint8_t WriteAddr)
     
     if(status != HAL_OK)
     {
-        printf("%s %d HAL I2C write fail\r\n",__FUNCTION__, __LINE__);
+        debug_info("%s %d HAL I2C write fail\r\n",__FUNCTION__, __LINE__);
         return status;
     }
     
@@ -350,4 +351,46 @@ cmd_fail:
 }
 
 
+/* 0:ok  1:error */
+uint8_t i2c_func_test(void)
+{
+    uint8_t buff_r[57] = {0};
+    uint8_t buff_w[57] = {0};
+    uint8_t ret = 0;
+    
+    for(int i = 0; i < 57; i++)
+    {
+        buff_w[i] = i;
+    }
+    ret = i2c_write_bytes(buff_w,EEPROM_ADDRESS,13,57);
+    if(ret == 0)
+    {
+        debug_info("eeprom write ok\r\n");
+    }
+    else
+    {
+        debug_info("eeprom write fail\r\n");
+        return 1;
+    }
+    osDelay(100);
+    ret = i2c_read_bytes(buff_r,EEPROM_ADDRESS,13,57);
+    if(ret == 0)
+    {
+        debug_info("eeprom read ok\r\n");
+    }
+    else
+    {
+        debug_info("eeprom read fail\r\n");
+        return 1;
+    }
 
+    for(int i = 0; i < 57; i++)
+    {
+        if(buff_w[i] != buff_r[i])
+        {
+            debug_info("eeprom readback data 0x:%x w:0x%x r:0x%x\r\n",i, buff_w[i],buff_r[i]);
+            return 1;
+        }
+    }
+    return 0;
+}
