@@ -225,13 +225,11 @@ void Delay(__IO uint32_t nCount)
 void StartTask03(void *argument)
 {
   /* USER CODE BEGIN StartTask03 */
-    uint32_t id = 0;
+
+    spi_flash_test();
   /* Infinite loop */
     for(;;)
     {
-        id = spi_flash_read_id();
-        debug_info("spi flash id : 0x%x\r\n", id);
-        
         HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
         osDelay(1000);
     }

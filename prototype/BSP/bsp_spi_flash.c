@@ -38,12 +38,12 @@ extern SPI_HandleTypeDef hspi1;
 #define SPI_FLASH_PER_WRITE_PAGE_SIZE 256
 #define SPI_FLASH_PAGE_SIZE   0x1000
 
-void spi_flash_cs_low(void)
+static void spi_flash_cs_low(void)
 {
     HAL_GPIO_WritePin(SPIFLASH_CS_GPIO_Port, SPIFLASH_CS_Pin, 0);
 }
 
-void spi_flash_cs_high(void)
+static void spi_flash_cs_high(void)
 {
     HAL_GPIO_WritePin(SPIFLASH_CS_GPIO_Port, SPIFLASH_CS_Pin, 1);
 }
@@ -67,7 +67,7 @@ uint32_t spi_flash_read_id(void)
 }
 
 
-uint8_t spi_flash_write_enable()
+static uint8_t spi_flash_write_enable()
 {
     HAL_StatusTypeDef status = HAL_OK;
     uint8_t cmd = W25X_WriteEnable;
@@ -83,7 +83,7 @@ uint8_t spi_flash_write_enable()
     return 0;
 }
 
-uint8_t spi_flash_wait_for_write_end(void)
+static uint8_t spi_flash_wait_for_write_end(void)
 {
     HAL_StatusTypeDef status = HAL_OK;
     uint8_t cmd = W25X_ReadStatusReg;
@@ -164,7 +164,7 @@ cmd_fail:
     return 1;
 }
 
-uint8_t spi_flash_page_write(uint8_t *buff, uint32_t write_addr, uint16_t len)
+static uint8_t spi_flash_page_write(uint8_t *buff, uint32_t write_addr, uint16_t len)
 {
     uint8_t ret = 0;
     HAL_StatusTypeDef status = HAL_OK;
@@ -206,6 +206,7 @@ uint8_t spi_flash_page_write(uint8_t *buff, uint32_t write_addr, uint16_t len)
         debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
         goto cmd_fail;
     }
+    return 0;
 cmd_fail:
     spi_flash_cs_high();
     return 1;
@@ -340,5 +341,82 @@ uint8_t spi_flash_buffer_write(uint8_t *buff, uint32_t write_addr, uint16_t len)
         }
     }
     
+    return 0;
+}
+
+uint8_t spi_flash_buffer_read(uint8_t *buff, uint32_t read_addr, uint16_t len)
+{
+    HAL_StatusTypeDef status = HAL_OK;
+    uint8_t send[4] = {W25X_ReadData, read_addr & 0xFF0000, read_addr & 0xFF00, read_addr & 0xFF};
+    
+    spi_flash_cs_low();
+    status = HAL_SPI_Transmit(&hspi1, send, 4, 100);
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    status = HAL_SPI_Receive(&hspi1, buff, len, 1000);
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    
+    spi_flash_cs_high();
+    return 0;
+    
+cmd_fail:
+    spi_flash_cs_high();
+    return 1;
+
+}
+
+uint8_t spi_flash_test(void)
+{
+    uint8_t ret = 0;
+    uint8_t data_w[100] = {0};
+    uint8_t data_r[100] = {0};
+    uint32_t id = spi_flash_read_id();
+    if(id == 0xffff)
+    {
+        debug_info("read flash id fail\r\n");
+        return 1;
+    }
+    else
+    {
+        debug_info("spi flash id:0x%X   \r\n", id);
+    }
+    for(int i = 0; i < 100; i++)
+    {
+        data_w[i] = i;
+    }
+    ret = spi_flash_sector_erease(0x00);
+    if(ret)
+    {
+        debug_info("flash erease sector fail\r\n");
+        return 1;
+    }
+    ret = spi_flash_buffer_write(data_w, 0x00, 100);
+    if(ret)
+    {
+        debug_info("write flash fail\r\n");
+        return 1;
+    }
+    ret = spi_flash_buffer_read(data_r, 0x00, 100);
+    if(ret)
+    {
+        debug_info("read flash fail\r\n");
+        return 1;
+    }
+    for(int i = 0; i < 100; i++)
+    {
+        if(data_r[i] != data_w[i])
+        {
+            debug_info("flash data inconformity w[%d]:0x%x    r[%d]:0x%x\r\n",i,data_w[i],i,data_r[i]);
+            return 1;
+        }
+    }
+    debug_info("spi flash test ok\r\n");
     return 0;
 }
