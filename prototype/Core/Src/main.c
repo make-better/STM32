@@ -32,6 +32,7 @@
 #include "bsp_exti.h"
 #include "bsp_i2c.h"
 #include "bsp_dma.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -108,6 +109,7 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
     EXTI_Key_Config();
+    
   /* USER CODE END 2 */
 
   /* Init scheduler */

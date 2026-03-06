@@ -30,6 +30,8 @@
 #include "bsp_i2c.h"
 #include "i2c.h"
 #include "bsp_spi_flash.h"
+#include "ff.h"
+#include "fatfs_test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,26 +52,28 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 extern UART_HandleTypeDef huart1;
+
+
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 128 * 2,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for myTask02 */
 osThreadId_t myTask02Handle;
 const osThreadAttr_t myTask02_attributes = {
   .name = "myTask02",
-  .stack_size = 128 * 4,
+  .stack_size = 128 * 2,
   .priority = (osPriority_t) osPriorityNormal1,
 };
 /* Definitions for myTask03 */
 osThreadId_t myTask03Handle;
 const osThreadAttr_t myTask03_attributes = {
   .name = "myTask03",
-  .stack_size = 128 * 8,
+  .stack_size = 128 * 24,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for Timer_Sys_Run */
@@ -224,14 +228,18 @@ void Delay(__IO uint32_t nCount)
 /* USER CODE END Header_StartTask03 */
 void StartTask03(void *argument)
 {
+    UBaseType_t size = 0;
   /* USER CODE BEGIN StartTask03 */
-
-    spi_flash_test();
+    osDelay(100);
+    size = uxTaskGetStackHighWaterMark(myTask03Handle);
+    fatfs_test();
+    size = uxTaskGetStackHighWaterMark(myTask03Handle);
   /* Infinite loop */
     for(;;)
     {
+//        debug_info("ok\r\n");
         HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
-        osDelay(1000);
+        osDelay(2000);
     }
   /* USER CODE END StartTask03 */
 }
