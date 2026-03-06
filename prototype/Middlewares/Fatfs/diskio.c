@@ -11,13 +11,15 @@
 #include "diskio.h"		/* Declarations FatFs MAI */
 
 /* Example: Declarations of the platform and disk functions in the project */
-#include "platform.h"
-#include "storage.h"
+#include "spi.h"
+#include "bsp_spi_flash.h"
+#include "cmsis_os.h"
 
 /* Example: Mapping of physical drive number for each drive */
-#define DEV_FLASH	0	/* Map FTL to physical drive 0 */
-#define DEV_MMC		1	/* Map MMC/SD card to physical drive 1 */
+#define DEV_MMC		0	/* Map MMC/SD card to physical drive 0 */
+#define SPI_FLASH	1	/* Map FTL to physical drive 1 */
 #define DEV_USB		2	/* Map USB MSD to physical drive 2 */
+
 
 
 /*-----------------------------------------------------------------------*/
@@ -28,30 +30,36 @@ DSTATUS disk_status (
 	BYTE pdrv		/* Physical drive nmuber to identify the drive */
 )
 {
-	DSTATUS stat;
+	DSTATUS stat = STA_NOINIT;
 	int result;
 
 	switch (pdrv) {
-	case DEV_RAM :
-		result = RAM_disk_status();
-
+	case SPI_FLASH :
+		if(sFLASH_ID == spi_flash_read_id())
+        {
+            stat &= ~STA_NOINIT;
+        }
+        else
+        {
+            stat = STA_NOINIT;
+        }
 		// translate the reslut code here
-
 		return stat;
 
-	case DEV_MMC :
-		result = MMC_disk_status();
+//	case DEV_MMC :
+//		result = MMC_disk_status();
 
-		// translate the reslut code here
+//		// translate the reslut code here
 
-		return stat;
+//		return stat;
 
-	case DEV_USB :
-		result = USB_disk_status();
+//	case DEV_USB :
+//		result = USB_disk_status();
 
-		// translate the reslut code here
+//		// translate the reslut code here
 
-		return stat;
+//		return stat;
+    default:break;
 	}
 	return STA_NOINIT;
 }
@@ -66,30 +74,38 @@ DSTATUS disk_initialize (
 	BYTE pdrv				/* Physical drive nmuber to identify the drive */
 )
 {
-	DSTATUS stat;
-	int result;
-
+	DSTATUS stat = STA_NOINIT;
+	uint8_t result;
+    
 	switch (pdrv) {
-	case DEV_RAM :
-		result = RAM_disk_initialize();
-
+	case SPI_FLASH :
+        result = spi_flash_wakeup();
+        if(result)
+        {
+            stat = STA_NOINIT;
+        }
+        else
+        {
+            stat = disk_status(SPI_FLASH);
+        }
 		// translate the reslut code here
 
 		return stat;
 
-	case DEV_MMC :
-		result = MMC_disk_initialize();
+//	case DEV_MMC :
+//		result = MMC_disk_initialize();
 
-		// translate the reslut code here
+//		// translate the reslut code here
 
-		return stat;
+//		return stat;
 
-	case DEV_USB :
-		result = USB_disk_initialize();
+//	case DEV_USB :
+//		result = USB_disk_initialize();
 
-		// translate the reslut code here
+//		// translate the reslut code here
 
-		return stat;
+//		return stat;
+        default:break;
 	}
 	return STA_NOINIT;
 }
@@ -107,36 +123,41 @@ DRESULT disk_read (
 	UINT count		/* Number of sectors to read */
 )
 {
-	DRESULT res;
-	int result;
+	DRESULT res = RES_OK;
+	uint8_t result;
 
 	switch (pdrv) {
-	case DEV_RAM :
-		// translate the arguments here
-
-		result = RAM_disk_read(buff, sector, count);
-
+	case SPI_FLASH :
+		// 扇区偏移2MB,外部flash文件系统空间放在SPI Flash后面6MB空间
+        sector += 512;
+		//每个扇区4096个字节
+        result = spi_flash_buffer_read(buff, sector << 12, count << 12);
+        if(result)
+        {
+            res = RES_ERROR;
+        }
 		// translate the reslut code here
 
 		return res;
 
-	case DEV_MMC :
-		// translate the arguments here
+//	case DEV_MMC :
+//		// translate the arguments here
 
-		result = MMC_disk_read(buff, sector, count);
+//		result = MMC_disk_read(buff, sector, count);
 
-		// translate the reslut code here
+//		// translate the reslut code here
 
-		return res;
+//		return res;
 
-	case DEV_USB :
-		// translate the arguments here
+//	case DEV_USB :
+//		// translate the arguments here
 
-		result = USB_disk_read(buff, sector, count);
+//		result = USB_disk_read(buff, sector, count);
 
-		// translate the reslut code here
+//		// translate the reslut code here
 
-		return res;
+//		return res;
+    default:break;
 	}
 
 	return RES_PARERR;
@@ -158,35 +179,48 @@ DRESULT disk_write (
 )
 {
 	DRESULT res;
-	int result;
-
+	uint8_t result;
+    uint32_t w_addr;
 	switch (pdrv) {
-	case DEV_RAM :
+	case SPI_FLASH :
 		// translate the arguments here
-
-		result = RAM_disk_write(buff, sector, count);
-
+        // 扇区偏移2MB,外部flash文件系统空间放在SPI Flash后面6MB空间
+        sector += 512;
+        w_addr = sector << 12;
+        result = spi_flash_sector_erease(w_addr);
+        if(result)
+        {
+            res = RES_WRPRT;
+        }
+        //每个扇区4096个字节
+		result = spi_flash_buffer_write((uint8_t*)buff, w_addr, count << 12);
+        if(result)
+        {
+            res = RES_WRPRT;
+        }
+        res = RES_OK;
 		// translate the reslut code here
 
 		return res;
 
-	case DEV_MMC :
-		// translate the arguments here
+//	case DEV_MMC :
+//		// translate the arguments here
 
-		result = MMC_disk_write(buff, sector, count);
+//		result = MMC_disk_write(buff, sector, count);
 
-		// translate the reslut code here
+//		// translate the reslut code here
 
-		return res;
+//		return res;
 
-	case DEV_USB :
-		// translate the arguments here
+//	case DEV_USB :
+//		// translate the arguments here
 
-		result = USB_disk_write(buff, sector, count);
+//		result = USB_disk_write(buff, sector, count);
 
-		// translate the reslut code here
+//		// translate the reslut code here
 
-		return res;
+//		return res;
+    default:break;
 	}
 
 	return RES_PARERR;
@@ -209,25 +243,53 @@ DRESULT disk_ioctl (
 	int result;
 
 	switch (pdrv) {
-	case DEV_RAM :
-
+	case SPI_FLASH :
+        switch(cmd)
+        {
+            /* 扇区数量:1536*4096/1024/1024 = 6MB */
+            case GET_SECTOR_COUNT:
+                *(DWORD *)buff = 1536;
+                break;
+            /* 扇区大小 */
+            case GET_SECTOR_SIZE:
+                *(WORD *)buff = 4096;
+                break;
+            /* 同时擦除扇区个数 */
+            case GET_BLOCK_SIZE:
+                *(DWORD *)buff = 1;
+                break;
+            default:
+                res = RES_PARERR;
+                return res;
+        }
 		// Process of the command for the RAM drive
-
+        res = RES_OK;
 		return res;
 
-	case DEV_MMC :
+//	case DEV_MMC :
 
-		// Process of the command for the MMC/SD card
+//		// Process of the command for the MMC/SD card
 
-		return res;
+//		return res;
 
-	case DEV_USB :
+//	case DEV_USB :
 
-		// Process of the command the USB drive
+//		// Process of the command the USB drive
 
-		return res;
+//		return res;
+    default:break;
 	}
 
 	return RES_PARERR;
 }
 
+__weak DWORD get_fattime(void)
+{
+    /* 返回当前时间戳 */
+     return    ((DWORD)(2015 - 1980) << 25)  /* Year 2015 */
+             | ((DWORD)1 << 21)        /* Month 1 */
+             | ((DWORD)1 << 16)        /* Mday 1 */
+             | ((DWORD)0 << 11)        /* Hour 0 */
+             | ((DWORD)0 << 5)         /* Min 0 */
+             | ((DWORD)0 >> 1);        /* Sec 0 */
+}
