@@ -29,7 +29,7 @@ extern SPI_HandleTypeDef hspi1;
 #define W25X_ManufactDeviceID 0x90
 #define W25X_JedecDeviceID 0x9F
 /*其它*/
-#define sFLASH_ID 0XEF4017
+
 #define Dummy_Byte 0xFF
 
 /* WIP(busy)标志，FLASH内部正在写入 */
@@ -48,6 +48,7 @@ static void spi_flash_cs_high(void)
     HAL_GPIO_WritePin(SPIFLASH_CS_GPIO_Port, SPIFLASH_CS_Pin, 1);
 }
 
+//读取flashID
 uint32_t spi_flash_read_id(void)
 {
     uint8_t temp[4] = {0};
@@ -66,11 +67,63 @@ uint32_t spi_flash_read_id(void)
     return temp[1] << 16 | temp[2] << 8 | temp[3];
 }
 
+//读取flash设备ID
+uint32_t spi_flash_read_device_id(void)
+{
+    uint8_t temp[4] = {0};
+    uint8_t send[4] = {W25X_DeviceID, Dummy_Byte, Dummy_Byte, Dummy_Byte};
+    HAL_StatusTypeDef status = HAL_OK;
+    
+    spi_flash_cs_low();
+    status = HAL_SPI_TransmitReceive(&hspi1, send, temp, 4, 1000);
+    spi_flash_cs_high();
+    
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        return 0xffff;
+    }
+    return temp[3];
+}
 
 static uint8_t spi_flash_write_enable()
 {
     HAL_StatusTypeDef status = HAL_OK;
     uint8_t cmd = W25X_WriteEnable;
+    
+    spi_flash_cs_low();
+    status = HAL_SPI_Transmit(&hspi1, &cmd, 1, 1000);
+    spi_flash_cs_high();
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        return 0x01;
+    }
+    return 0;
+}
+
+//flash芯片掉电
+uint8_t spi_flash_powerdown(void)
+{
+    HAL_StatusTypeDef status = HAL_OK;
+    uint8_t cmd = W25X_PowerDown;
+    
+    spi_flash_cs_low();
+    status = HAL_SPI_Transmit(&hspi1, &cmd, 1, 1000);
+    spi_flash_cs_high();
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        return 0x01;
+    }
+    return 0;
+}
+
+//芯片唤醒
+uint8_t spi_flash_wakeup(void)
+{
+    HAL_StatusTypeDef status = HAL_OK;
+    uint8_t cmd = W25X_ReleasePowerDown;
     
     spi_flash_cs_low();
     status = HAL_SPI_Transmit(&hspi1, &cmd, 1, 1000);
@@ -372,6 +425,33 @@ cmd_fail:
 
 }
 
+//芯片擦除
+uint8_t spi_flash_bulk_erase(void)
+{
+    HAL_StatusTypeDef status = HAL_OK;
+    uint8_t cmd = W25X_ChipErase, ret = 0;
+    
+    spi_flash_cs_low();
+    status = HAL_SPI_Transmit(&hspi1, &cmd, 1, 100);
+    spi_flash_cs_high();
+    if(status != HAL_OK)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+    ret = spi_flash_wait_for_write_end();
+    if(ret)
+    {
+        debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
+        goto cmd_fail;
+    }
+cmd_fail:
+    return 1;
+}
+
+
+
+//flash读写测试
 uint8_t spi_flash_test(void)
 {
     uint8_t ret = 0;
