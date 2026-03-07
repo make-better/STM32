@@ -36,7 +36,7 @@ extern SPI_HandleTypeDef hspi1;
 #define WIP_FLAG  0x01
 
 #define SPI_FLASH_PER_WRITE_PAGE_SIZE 256
-#define SPI_FLASH_PAGE_SIZE   0x1000
+#define SPI_FLASH_PAGE_SIZE   256
 
 static void spi_flash_cs_low(void)
 {
@@ -136,7 +136,7 @@ uint8_t spi_flash_wakeup(void)
     return 0;
 }
 
-static uint8_t spi_flash_wait_for_write_end(void)
+uint8_t spi_flash_wait_for_write_end(void)
 {
     HAL_StatusTypeDef status = HAL_OK;
     uint8_t cmd = W25X_ReadStatusReg;

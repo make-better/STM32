@@ -12,6 +12,7 @@ uint32_t spi_flash_read_id(void);
 uint32_t spi_flash_read_device_id(void);
 uint8_t spi_flash_powerdown(void);
 uint8_t spi_flash_wakeup(void);
+uint8_t spi_flash_wait_for_write_end(void);
 uint8_t spi_flash_sector_erease(uint32_t sector_addr);
 uint8_t spi_flash_buffer_write(uint8_t *buff, uint32_t write_addr, uint16_t len);
 uint8_t spi_flash_buffer_read(uint8_t *buff, uint32_t read_addr, uint16_t len);
