@@ -221,8 +221,8 @@ static uint8_t spi_flash_page_write(uint8_t *buff, uint32_t write_addr, uint16_t
 {
     uint8_t ret = 0;
     HAL_StatusTypeDef status = HAL_OK;
-    uint8_t send[4] = {W25X_PageProgram, write_addr & 0xFF0000, write_addr & 0xFF00, write_addr & 0xFF};
-    
+    uint8_t send[4] = {W25X_PageProgram, (write_addr & 0xFF0000) >> 16, (write_addr & 0xFF00) >> 8, write_addr & 0xFF};
+
     ret = spi_flash_write_enable();
     if(ret)
     {
@@ -400,7 +400,14 @@ uint8_t spi_flash_buffer_write(uint8_t *buff, uint32_t write_addr, uint16_t len)
 uint8_t spi_flash_buffer_read(uint8_t *buff, uint32_t read_addr, uint16_t len)
 {
     HAL_StatusTypeDef status = HAL_OK;
-    uint8_t send[4] = {W25X_ReadData, read_addr & 0xFF0000, read_addr & 0xFF00, read_addr & 0xFF};
+    uint8_t send[4] = {W25X_ReadData, (read_addr & 0xFF0000) >> 16, (read_addr & 0xFF00) >> 8, read_addr & 0xFF};
+    uint8_t num_of_page = 0;
+    uint8_t count = 0;
+    uint32_t r_addr;
+    uint16_t read_len;
+    
+    num_of_page = len / SPI_FLASH_PAGE_SIZE;
+    count = len % SPI_FLASH_PAGE_SIZE;
     
     spi_flash_cs_low();
     status = HAL_SPI_Transmit(&hspi1, send, 4, 100);
@@ -415,7 +422,6 @@ uint8_t spi_flash_buffer_read(uint8_t *buff, uint32_t read_addr, uint16_t len)
         debug_info("%s %d error\r\n",__FUNCTION__,__LINE__);
         goto cmd_fail;
     }
-    
     spi_flash_cs_high();
     return 0;
     
@@ -424,6 +430,7 @@ cmd_fail:
     return 1;
 
 }
+
 
 //Ð¾Æ¬²Á³ý
 uint8_t spi_flash_bulk_erase(void)
@@ -449,14 +456,15 @@ cmd_fail:
     return 1;
 }
 
-
-
+#define TEST_BUFF_SIZE 512
+#define TEST_ADDRESS 0Xf0
 //flash¶ÁÐ´²âÊÔ
 uint8_t spi_flash_test(void)
 {
     uint8_t ret = 0;
-    uint8_t data_w[100] = {0};
-    uint8_t data_r[100] = {0};
+    
+    uint8_t data_w[TEST_BUFF_SIZE] = {0};
+    uint8_t data_r[TEST_BUFF_SIZE] = {0};
     uint32_t id = spi_flash_read_id();
     if(id == 0xffff)
     {
@@ -467,29 +475,30 @@ uint8_t spi_flash_test(void)
     {
         debug_info("spi flash id:0x%X   \r\n", id);
     }
-    for(int i = 0; i < 100; i++)
+    for(int i = 0; i < TEST_BUFF_SIZE; i++)
     {
-        data_w[i] = i;
+        data_w[i] = i % 256;
     }
-    ret = spi_flash_sector_erease(0x00);
+    spi_flash_sector_erease(0x100);
+    ret = spi_flash_sector_erease(TEST_ADDRESS);
     if(ret)
     {
         debug_info("flash erease sector fail\r\n");
         return 1;
     }
-    ret = spi_flash_buffer_write(data_w, 0x00, 100);
+    ret = spi_flash_buffer_write(data_w, TEST_ADDRESS, TEST_BUFF_SIZE);
     if(ret)
     {
         debug_info("write flash fail\r\n");
         return 1;
     }
-    ret = spi_flash_buffer_read(data_r, 0x00, 100);
+    ret = spi_flash_buffer_read(data_r, TEST_ADDRESS, TEST_BUFF_SIZE);
     if(ret)
     {
         debug_info("read flash fail\r\n");
         return 1;
     }
-    for(int i = 0; i < 100; i++)
+    for(int i = 0; i < TEST_BUFF_SIZE; i++)
     {
         if(data_r[i] != data_w[i])
         {
@@ -500,3 +509,7 @@ uint8_t spi_flash_test(void)
     debug_info("spi flash test ok\r\n");
     return 0;
 }
+
+#undef TEST_BUFF_SIZE
+#undef TEST_ADDRESS
+
