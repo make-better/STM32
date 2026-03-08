@@ -32,17 +32,24 @@ DSTATUS disk_status (
 {
 	DSTATUS stat = STA_NOINIT;
 	int result;
+    int i = 0;
 
 	switch (pdrv) {
 	case SPI_FLASH :
-		if(sFLASH_ID == spi_flash_read_id())
+        do
         {
-            stat &= ~STA_NOINIT;
-        }
-        else
-        {
-            stat = STA_NOINIT;
-        }
+            if(sFLASH_ID == spi_flash_read_id())
+            {
+                stat &= ~STA_NOINIT;
+                i = 5;
+            }
+            else
+            {
+                stat = STA_NOINIT;
+                i++;
+            }
+        }while(i < 5);
+		
 		// translate the reslut code here
 		return stat;
 
@@ -241,7 +248,7 @@ DRESULT disk_ioctl (
 {
 	DRESULT res;
 	int result;
-
+    int i = 0;
 	switch (pdrv) {
 	case SPI_FLASH :
         switch(cmd)
@@ -258,6 +265,21 @@ DRESULT disk_ioctl (
             case GET_BLOCK_SIZE:
                 *(DWORD *)buff = 1;
                 break;
+            case CTRL_SYNC:
+                do
+                {
+                    if(spi_flash_wait_for_write_end() != 0)
+                    {
+                        i++;
+                        res = RES_PARERR;
+                    }
+                    else
+                    {
+                        i = 5;
+                        res = RES_OK;
+                        return res;
+                    }
+                }while(i < 5);
             default:
                 res = RES_PARERR;
                 return res;

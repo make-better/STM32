@@ -278,6 +278,7 @@ uint8_t spi_flash_buffer_write(uint8_t *buff, uint32_t write_addr, uint16_t len)
     /* 不满一页的数据长度 */
     num_of_single = len % SPI_FLASH_PAGE_SIZE;
     
+    
     /* 若刚好页对齐 */
     if(addr == 0)
     {

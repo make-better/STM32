@@ -32,6 +32,7 @@
 #include "bsp_spi_flash.h"
 #include "ff.h"
 #include "fatfs_test.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,7 +74,7 @@ const osThreadAttr_t myTask02_attributes = {
 osThreadId_t myTask03Handle;
 const osThreadAttr_t myTask03_attributes = {
   .name = "myTask03",
-  .stack_size = 128 * 24,
+  .stack_size = 128 * 28,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for Timer_Sys_Run */
@@ -224,16 +225,47 @@ void Delay(__IO uint32_t nCount)
 * @retval None
 */
 
+//uint8_t buff[1024] = {0};
 
 /* USER CODE END Header_StartTask03 */
 void StartTask03(void *argument)
 {
     UBaseType_t size = 0;
   /* USER CODE BEGIN StartTask03 */
-    osDelay(100);
+//    spi_flash_buffer_read(buff, 0x241000, 1024);
+//    for(int i = 0; i < 1024; i++)
+//    {
+//        debug_info("%x ",buff[i]);
+//        if(i > 0 & i % 20 == 0)
+//        {
+//            debug_info("\r\n");
+//        }
+//    }
+//    debug_info("\r\n");
+//    spi_flash_buffer_read(buff, 0x240000, 1024);
+//    for(int i = 0; i < 1024; i++)
+//    {
+//        debug_info("%x ",buff[i]);
+//        if(i > 0 & i % 20 == 0)
+//        {
+//            debug_info("\r\n");
+//        }
+//    }
+//    debug_info("\r\n");
+//    spi_flash_buffer_read(buff, 0x245000, 1024);
+//    for(int i = 0; i < 1024; i++)
+//    {
+//        debug_info("%x ",buff[i]);
+//        if(i > 0 & i % 20 == 0)
+//        {
+//            debug_info("\r\n");
+//        }
+//    }
+//    debug_info("\r\n");
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
+    
     fatfs_test();
-    size = uxTaskGetStackHighWaterMark(myTask03Handle);
+    
   /* Infinite loop */
     for(;;)
     {
