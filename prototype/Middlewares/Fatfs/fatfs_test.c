@@ -1,7 +1,7 @@
 #include "fatfs_test.h"
 #include "bsp_usart.h"
 #include "string.h"
-
+#include "bsp_spi_flash.h"
 
 static FATFS fs;                         /* 文件系统对象 */
 
@@ -9,13 +9,13 @@ uint8_t fs_work_buff[FF_MAX_SS] = {0};
 static BYTE buffer[256]= {0};           /* 读缓冲区 */
 static BYTE textFileBuffer[] =           /* 写缓冲区*/
      //"欢迎使用野火STM32开发板，今天是个好日子，新建文件系统测试文件\r\n";
-"maybe you should go\r\n";
+"1234\r\n";
 static FIL fnew;                         /* 文件对象 */
 static FRESULT res_flash;                /* 文件操作结果 */
 static UINT fnum;                        /* 文件成功读写数量 */
 
 
-#define TEST_FILE_NAME "1:fatfs_test_file.txt"
+#define TEST_FILE_NAME "1:4321"
 
 uint8_t fatfs_test(void)
 {
@@ -23,6 +23,7 @@ uint8_t fatfs_test(void)
     res_flash = f_mount(&fs, "1:", 1);
     //若没有文件系统，进行格式化并创建文件系统
     if(res_flash == FR_NO_FILESYSTEM)
+//    if(1)
     {
         res_flash = f_mkfs("1:", 0, fs_work_buff, FF_MAX_SS);
         if(res_flash == FR_OK)
@@ -58,7 +59,7 @@ uint8_t fatfs_test(void)
         return 1;
     }
     /* 打开或创建一个文件 写入数据*/
-    res_flash = f_open(&fnew,TEST_FILE_NAME,FA_CREATE_ALWAYS | FA_WRITE);
+    res_flash = f_open(&fnew,TEST_FILE_NAME, FA_CREATE_ALWAYS | FA_WRITE);
     if(res_flash == FR_OK)
     {
         debug_info("open file %s to write ok\r\n", TEST_FILE_NAME);
@@ -69,7 +70,12 @@ uint8_t fatfs_test(void)
             debug_info("file %s write ok, size:%d\r\n",TEST_FILE_NAME, fnum);
             debug_info(":\r\n%s\r\n",textFileBuffer);
             /* 关闭文件 */
-            f_close(&fnew);
+            res_flash = f_close(&fnew);
+            if(res_flash != FR_OK)
+            {
+                debug_info("close file %s to write fail %d\r\n", TEST_FILE_NAME, res_flash);
+                goto fail_mount;
+            }
             debug_info("file %s close\r\n", TEST_FILE_NAME);
         }
         else
@@ -84,7 +90,6 @@ uint8_t fatfs_test(void)
         goto fail_mount;
     }
     
-
     /* 打开一个文件 读取数据 */
     res_flash = f_open(&fnew, TEST_FILE_NAME, FA_OPEN_EXISTING | FA_READ);
     if(res_flash == FR_OK)
@@ -97,7 +102,12 @@ uint8_t fatfs_test(void)
             debug_info("file %s read ok, size:%d\r\n", TEST_FILE_NAME, fnum);
             debug_info(":\r\n%s\r\n",buffer);
             /* 关闭文件 */
-            f_close(&fnew);
+            res_flash = f_close(&fnew);
+            if(res_flash != FR_OK)
+            {
+                debug_info("close file %s to read fail %d\r\n", TEST_FILE_NAME, res_flash);
+                goto fail_mount;
+            }
             debug_info("file %s close\r\n", TEST_FILE_NAME);
         }
         else

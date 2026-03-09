@@ -308,7 +308,7 @@ DRESULT disk_ioctl (
 __weak DWORD get_fattime(void)
 {
     /* 返回当前时间戳 */
-     return    ((DWORD)(2015 - 1980) << 25)  /* Year 2015 */
+     return    ((DWORD)(2026 - 1980) << 25)  /* Year 2026 */
              | ((DWORD)1 << 21)        /* Month 1 */
              | ((DWORD)1 << 16)        /* Mday 1 */
              | ((DWORD)0 << 11)        /* Hour 0 */

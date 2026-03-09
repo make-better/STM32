@@ -262,10 +262,10 @@ void StartTask03(void *argument)
 //        }
 //    }
 //    debug_info("\r\n");
-    size = uxTaskGetStackHighWaterMark(myTask03Handle);
+    
     
     fatfs_test();
-    
+    size = uxTaskGetStackHighWaterMark(myTask03Handle);
   /* Infinite loop */
     for(;;)
     {

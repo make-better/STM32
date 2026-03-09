@@ -157,18 +157,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>283</LineNumber>
+          <LineNumber>270</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134271734</Address>
+          <Address>134246210</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\BSP\bsp_spi_flash.c</Filename>
+          <Filename>../Core/Src/freertos.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\prototype\../BSP/bsp_spi_flash.c\283</Expression>
+          <Expression>\\prototype\../Core/Src/freertos.c\270</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
