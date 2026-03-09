@@ -171,7 +171,7 @@ uint8_t spi_flash_sector_erease(uint32_t sector_addr)
 {
     HAL_StatusTypeDef status = HAL_OK;
     uint8_t cmd = W25X_SectorErase;
-    uint8_t addr[3] = {sector_addr & 0xFF0000, sector_addr & 0xFF00, sector_addr & 0xFF};
+    uint8_t addr[3] = {(sector_addr & 0xFF0000) >> 16, (sector_addr & 0xFF00) >> 8, sector_addr & 0xFF};
     uint8_t ret = 0;
     
     ret = spi_flash_write_enable();
@@ -277,8 +277,6 @@ uint8_t spi_flash_buffer_write(uint8_t *buff, uint32_t write_addr, uint16_t len)
     num_of_page = len / SPI_FLASH_PAGE_SIZE;
     /* 不满一页的数据长度 */
     num_of_single = len % SPI_FLASH_PAGE_SIZE;
-    
-    
     /* 若刚好页对齐 */
     if(addr == 0)
     {
@@ -424,6 +422,7 @@ uint8_t spi_flash_buffer_read(uint8_t *buff, uint32_t read_addr, uint16_t len)
         goto cmd_fail;
     }
     spi_flash_cs_high();
+    
     return 0;
     
 cmd_fail:
