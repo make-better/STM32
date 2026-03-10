@@ -159,7 +159,7 @@
           <Type>0</Type>
           <LineNumber>270</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134246210</Address>
+          <Address>134239230</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -176,6 +176,11 @@
           <count>0</count>
           <WinNumber>1</WinNumber>
           <ItemText>fs_work_buff</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>adc_converted_value</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
