@@ -264,7 +264,7 @@ void StartTask03(void *argument)
 //    debug_info("\r\n");
     
     
-    fatfs_test();
+//    fatfs_test();
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
   /* Infinite loop */
     for(;;)
