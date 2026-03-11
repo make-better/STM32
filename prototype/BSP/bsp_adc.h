@@ -8,7 +8,7 @@ extern "C" {
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_cortex.h"
     
-    
+void adc_init(void);
 void show_adc_value(void);
 #ifdef __cplusplus
 }

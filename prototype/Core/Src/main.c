@@ -32,6 +32,7 @@
 #include "bsp_exti.h"
 #include "bsp_i2c.h"
 #include "bsp_dma.h"
+#include "bsp_adc.h"
 
 /* USER CODE END Includes */
 
@@ -98,7 +99,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_ADC1_Init();
+//  MX_ADC1_Init();
+    
   MX_USART1_UART_Init();
   DMA_UART1_Config();
 //  MX_I2C1_Init();
@@ -106,9 +108,10 @@ int main(void)
 //  MX_USB_PCD_Init();
 //  MX_FSMC_Init();
 //  MX_SDIO_MMC_Init();
-  MX_SPI1_Init();
+//  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
     EXTI_Key_Config();
+    adc_init();
     
   /* USER CODE END 2 */
 
@@ -170,7 +173,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC|RCC_PERIPHCLK_USB;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV4;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
   PeriphClkInit.UsbClockSelection = RCC_USBPLLCLK_DIV1_5;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
