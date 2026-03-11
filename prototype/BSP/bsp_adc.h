@@ -9,7 +9,7 @@ extern "C" {
 #include "stm32f1xx_hal_cortex.h"
     
     
-    
+void show_adc_value(void);
 #ifdef __cplusplus
 }
 #endif

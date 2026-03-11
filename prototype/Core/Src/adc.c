@@ -58,13 +58,13 @@ void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_11;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN ADC1_Init 2 */
-  HAL_NVIC_SetPriority(ADC1_2_IRQn, 0, 7);
+  HAL_NVIC_SetPriority(ADC1_2_IRQn, 6, 7);
   HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
   HAL_ADC_Start_IT(&hadc1);
   /* USER CODE END ADC1_Init 2 */

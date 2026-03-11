@@ -28,6 +28,7 @@
 #include "stdio.h"
 #include "bsp_usart.h"
 #include "bsp_i2c.h"
+#include "bsp_adc.h"
 #include "i2c.h"
 #include "bsp_spi_flash.h"
 #include "ff.h"
@@ -270,6 +271,7 @@ void StartTask03(void *argument)
     for(;;)
     {
 //        debug_info("ok\r\n");
+        show_adc_value();
         HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
         osDelay(2000);
     }
