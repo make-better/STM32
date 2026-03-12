@@ -233,45 +233,12 @@ void StartTask03(void *argument)
 {
     UBaseType_t size = 0;
   /* USER CODE BEGIN StartTask03 */
-//    spi_flash_buffer_read(buff, 0x241000, 1024);
-//    for(int i = 0; i < 1024; i++)
-//    {
-//        debug_info("%x ",buff[i]);
-//        if(i > 0 & i % 20 == 0)
-//        {
-//            debug_info("\r\n");
-//        }
-//    }
-//    debug_info("\r\n");
-//    spi_flash_buffer_read(buff, 0x240000, 1024);
-//    for(int i = 0; i < 1024; i++)
-//    {
-//        debug_info("%x ",buff[i]);
-//        if(i > 0 & i % 20 == 0)
-//        {
-//            debug_info("\r\n");
-//        }
-//    }
-//    debug_info("\r\n");
-//    spi_flash_buffer_read(buff, 0x245000, 1024);
-//    for(int i = 0; i < 1024; i++)
-//    {
-//        debug_info("%x ",buff[i]);
-//        if(i > 0 & i % 20 == 0)
-//        {
-//            debug_info("\r\n");
-//        }
-//    }
-//    debug_info("\r\n");
-    
-    
-//    fatfs_test();
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
   /* Infinite loop */
     for(;;)
     {
 //        debug_info("ok\r\n");
-        show_adc_value();
+        show_adc_double_value();
         HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
         osDelay(2000);
     }

@@ -111,7 +111,7 @@ int main(void)
 //  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
     EXTI_Key_Config();
-    adc_init();
+    adc_double_init();
     
   /* USER CODE END 2 */
 
