@@ -238,8 +238,8 @@ void StartTask03(void *argument)
     for(;;)
     {
 //        debug_info("ok\r\n");
-        show_adc_double_value();
-        HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
+//        show_adc_double_value();
+//        HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
         osDelay(2000);
     }
   /* USER CODE END StartTask03 */

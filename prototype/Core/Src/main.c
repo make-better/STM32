@@ -33,7 +33,7 @@
 #include "bsp_i2c.h"
 #include "bsp_dma.h"
 #include "bsp_adc.h"
-
+#include "bsp_time_base.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -111,7 +111,8 @@ int main(void)
 //  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
     EXTI_Key_Config();
-    adc_double_init();
+    basic_timx_init();
+//    adc_double_init();
     
   /* USER CODE END 2 */
 
@@ -248,7 +249,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+    if (htim->Instance == TIM6) {
+        basic_timer_callback();
+        
+    }
   /* USER CODE END Callback 1 */
 }
 

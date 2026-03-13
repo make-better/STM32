@@ -62,6 +62,7 @@ extern TIM_HandleTypeDef htim1;
 extern DMA_HandleTypeDef DMA_UART1_TX_Handle;
 extern DMA_HandleTypeDef DMA_UART1_RX_Handle;
 extern DMA_HandleTypeDef hdma_adcx1;
+extern TIM_HandleTypeDef htimx6;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -190,6 +191,11 @@ void TIM1_UP_IRQHandler(void)
   /* USER CODE BEGIN TIM1_UP_IRQn 1 */
 
   /* USER CODE END TIM1_UP_IRQn 1 */
+}
+
+void TIM6_IRQHandler(void)
+{
+    HAL_TIM_IRQHandler(&htimx6);
 }
 
 /**
