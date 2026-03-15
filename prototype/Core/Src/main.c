@@ -34,6 +34,7 @@
 #include "bsp_dma.h"
 #include "bsp_adc.h"
 #include "bsp_time_base.h"
+#include "bsp_time_advance.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -111,7 +112,8 @@ int main(void)
 //  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
     EXTI_Key_Config();
-    basic_timx_init();
+//    basic_timx_init();
+advanced_tim_pwm_output_test();
 //    adc_double_init();
     
   /* USER CODE END 2 */

@@ -10,7 +10,7 @@ extern "C" {
 
 
 
-
+void advanced_tim_pwm_output_test(void);
 
 
 #ifdef __cplusplus
