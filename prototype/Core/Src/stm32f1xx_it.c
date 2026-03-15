@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bsp_usart.h"
+#include "bsp_time_general.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -196,6 +197,11 @@ void TIM1_UP_IRQHandler(void)
 void TIM6_IRQHandler(void)
 {
     HAL_TIM_IRQHandler(&htimx6);
+}
+
+void TIM5_IRQHandler(void)
+{
+    HAL_TIM_IRQHandler(&htimx5);
 }
 
 /**

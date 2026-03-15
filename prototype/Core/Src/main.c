@@ -35,6 +35,7 @@
 #include "bsp_adc.h"
 #include "bsp_time_base.h"
 #include "bsp_time_advance.h"
+#include "bsp_time_general.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -111,9 +112,10 @@ int main(void)
 //  MX_SDIO_MMC_Init();
 //  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-    EXTI_Key_Config();
+//    EXTI_Key_Config();
 //    basic_timx_init();
-advanced_tim_pwm_output_test();
+//advanced_tim_pwm_output_test();
+    
 //    adc_double_init();
     
   /* USER CODE END 2 */
@@ -254,6 +256,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if (htim->Instance == TIM6) {
         basic_timer_callback();
         
+    }
+    if(htim->Instance == TIM5)
+    {
+        TIM_ICUserValueStructure.usPeriod++;
     }
   /* USER CODE END Callback 1 */
 }

@@ -34,6 +34,7 @@
 #include "ff.h"
 #include "fatfs_test.h"
 #include "string.h"
+#include "bsp_time_general.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -233,6 +234,7 @@ void StartTask03(void *argument)
 {
     UBaseType_t size = 0;
   /* USER CODE BEGIN StartTask03 */
+    general_tim_ic_config();
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
   /* Infinite loop */
     for(;;)
@@ -240,7 +242,8 @@ void StartTask03(void *argument)
 //        debug_info("ok\r\n");
 //        show_adc_double_value();
 //        HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
-        osDelay(2000);
+        show_ic_value();
+        osDelay(200);
     }
   /* USER CODE END StartTask03 */
 }

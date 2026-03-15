@@ -20,7 +20,7 @@
 
 TIM_HandleTypeDef htimx8;
 
-void HAL_TIM_MspPostInit(void)
+static void HAL_TIM_MspPostInit(void)
 {
     GPIO_InitTypeDef GPIO_InitStruct;
     
@@ -35,7 +35,7 @@ void HAL_TIM_MspPostInit(void)
     HAL_GPIO_Init(ADVANCED_OCNPWM_GPIO_PORT, &GPIO_InitStruct);
 }
 
-void ADVANCED_TIM_Mode_Config(void)
+static void ADVANCED_TIM_Mode_Config(void)
 {
     TIM_ClockConfigTypeDef Clock_Config;
     TIM_MasterConfigTypeDef Master_Config;

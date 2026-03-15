@@ -1997,6 +1997,11 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\bsp_time_advance.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_time_general.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\bsp_time_general.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
