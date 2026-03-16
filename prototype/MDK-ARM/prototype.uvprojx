@@ -2002,6 +2002,11 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\bsp_time_general.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_tpad.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\bsp_tpad.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

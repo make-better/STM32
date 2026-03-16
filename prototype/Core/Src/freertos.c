@@ -35,6 +35,7 @@
 #include "fatfs_test.h"
 #include "string.h"
 #include "bsp_time_general.h"
+#include "bsp_tpad.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -242,8 +243,11 @@ void StartTask03(void *argument)
 //        debug_info("ok\r\n");
 //        show_adc_double_value();
 //        HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
-        show_ic_value();
-        osDelay(200);
+        if(tpad_scan(0))
+        {
+            HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
+        }
+        osDelay(100);
     }
   /* USER CODE END StartTask03 */
 }
