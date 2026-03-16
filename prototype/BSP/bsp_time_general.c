@@ -39,8 +39,6 @@ static void general_timer_gpio_config(void)
 {
     GPIO_InitTypeDef    GPIO_InitStruct;
     
-    GENERAL_TIM_RCC_CLK_ENABLE();
-    
     KEY1_RCC_CLK_ENABLE();
     
     GPIO_InitStruct.Pin = KEY1_GPIO_PIN;
@@ -57,6 +55,8 @@ static void general_timer_mode_config(void)
     TIM_ClockConfigTypeDef CLKSource;
     TIM_MasterConfigTypeDef MasterConfig;
     TIM_IC_InitTypeDef ICConfig;
+    
+    GENERAL_TIM_RCC_CLK_ENABLE();
     
     htimx5.Instance = GENERAL_TIMx;
     htimx5.Init.Prescaler = GENERAL_TIM_PRESCALER;
@@ -144,6 +144,7 @@ void show_ic_value(void)
     uint32_t time;
     if(TIM_ICUserShow.ucFinishFlag)
     {
+        TIM_ICUserShow.ucFinishFlag = 0;
         time = TIM_ICUserShow.usPeriod * GENERAL_TIM_PERIOD + TIM_ICUserShow.usCtr;
         debug_info("high vol time: %d.%d s\r\n",time/TIM_PscCLK, time % TIM_PscCLK);
     }
