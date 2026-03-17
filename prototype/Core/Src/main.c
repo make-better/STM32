@@ -107,8 +107,8 @@ int main(void)
   MX_USART1_UART_Init();
   DMA_UART1_Config();
 //  MX_I2C1_Init();
-    I2C_By_GPIO_Init();
-    tpad_init();
+//    I2C_By_GPIO_Init();
+//    tpad_init();
 //  MX_USB_PCD_Init();
 //  MX_FSMC_Init();
 //  MX_SDIO_MMC_Init();
