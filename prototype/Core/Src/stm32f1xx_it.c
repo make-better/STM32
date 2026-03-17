@@ -64,6 +64,7 @@ extern DMA_HandleTypeDef DMA_UART1_TX_Handle;
 extern DMA_HandleTypeDef DMA_UART1_RX_Handle;
 extern DMA_HandleTypeDef hdma_adcx1;
 extern TIM_HandleTypeDef htimx6;
+extern WWDG_HandleTypeDef hwwdg;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -263,5 +264,9 @@ void DMA1_Channel5_IRQHandler(void)
   /* USER CODE END DMA1_Channel5_IRQn 1 */
 }
 
+void WWDG_IRQHandler(void)
+{
+    HAL_WWDG_IRQHandler(&hwwdg);
+}
 
 /* USER CODE END 1 */

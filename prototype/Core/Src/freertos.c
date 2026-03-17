@@ -37,6 +37,7 @@
 #include "bsp_time_general.h"
 #include "bsp_tpad.h"
 #include "bsp_iwdg.h"
+#include "bsp_wwdg.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -237,14 +238,16 @@ void StartTask03(void *argument)
     UBaseType_t size = 0;
   /* USER CODE BEGIN StartTask03 */
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
-    iwdg_config(IWDG_PRESCALER_64, 625);//1S
+//    wwdg_config(127, 80, WWDG_PRESCALER_8);//42ms~57ms
     debug_info("start\r\n");
   /* Infinite loop */
     for(;;)
     {
+        osDelay(1000);
         HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
-        iwdg_feed();
-        osDelay(1002);
+    
+        
+        
     }
   /* USER CODE END StartTask03 */
 }

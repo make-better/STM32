@@ -1313,6 +1313,11 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_iwdg.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f1xx_hal_wwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_wwdg.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2016,6 +2021,11 @@
               <FileName>bsp_iwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\BSP\bsp_iwdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_wwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\bsp_wwdg.c</FilePath>
             </File>
           </Files>
         </Group>
