@@ -2027,6 +2027,11 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\bsp_wwdg.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_sdio_sdcard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\bsp_sdio_sdcard.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
