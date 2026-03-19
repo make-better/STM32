@@ -38,6 +38,8 @@
 #include "bsp_tpad.h"
 #include "bsp_iwdg.h"
 #include "bsp_wwdg.h"
+#include "bsp_sdio_sdcard.h"
+#include "sdio_test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -240,13 +242,14 @@ void StartTask03(void *argument)
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
 //    wwdg_config(127, 80, WWDG_PRESCALER_8);//42ms~57ms
     debug_info("start\r\n");
+    osDelay(1000);
+    SD_Test();
   /* Infinite loop */
     for(;;)
     {
         osDelay(1000);
         HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
     
-        
         
     }
   /* USER CODE END StartTask03 */
