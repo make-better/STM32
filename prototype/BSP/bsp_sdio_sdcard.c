@@ -16,7 +16,7 @@ uint8_t BSP_SD_Init(void)
     uSdHandle.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
     uSdHandle.Init.BusWide = SDIO_BUS_WIDE_1B;
     uSdHandle.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
-    uSdHandle.Init.ClockDiv = SDIO_TRANSFER_CLK_DIV;
+    uSdHandle.Init.ClockDiv = 16;
     
     BSP_SD_MspInit(NULL);
     

@@ -37,6 +37,7 @@
 #include "bsp_time_advance.h"
 #include "bsp_time_general.h"
 #include "bsp_tpad.h"
+#include "sdio_test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -119,7 +120,7 @@ int main(void)
 //advanced_tim_pwm_output_test();
     
 //    adc_double_init();
-    
+
   /* USER CODE END 2 */
 
   /* Init scheduler */

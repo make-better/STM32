@@ -157,18 +157,50 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>40</LineNumber>
+          <LineNumber>870</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134252072</Address>
+          <Address>134238838</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Core\Src\sdio_test.c</Filename>
+          <Filename>..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_sd.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\prototype\../Core/Src/sdio_test.c\40</Expression>
+          <Expression>\\prototype\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sd.c\870</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>852</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134238714</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_sd.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\prototype\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sd.c\852</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>926</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134239186</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_sd.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\prototype\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sd.c\926</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

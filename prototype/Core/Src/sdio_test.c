@@ -37,25 +37,24 @@ void SD_Test(void)
     }
     debug_info("sd erase ok\r\n");
     Fill_Buffer(aTxBuffer, BUFFER_WORDS_SIZE, 0x22ff);
-    sd_state = BSP_SD_WriteBlocks(aTxBuffer, BLOCK_START_ADDR, NUM_OF_BLOCKS, 10);
-    while(BSP_SD_GetCardState() != SD_TRANSFER_OK)
-    {
-        HAL_Delay(1);
-    }
+    sd_state = BSP_SD_WriteBlocks(aTxBuffer, BLOCK_START_ADDR, NUM_OF_BLOCKS, 1000);
+    
     if(sd_state != MSD_OK)
     {
         debug_info("sd write failed\r\n");
         return;
     }
+    while(BSP_SD_GetCardState() != SD_TRANSFER_OK);
     debug_info("sd write ok\r\n");
     
     sd_state = BSP_SD_ReadBlocks(aRxBuffer, BLOCK_START_ADDR, NUM_OF_BLOCKS, 10);
-    while(BSP_SD_GetCardState() != SD_TRANSFER_OK);
+    
     if(sd_state != MSD_OK)
     {
         debug_info("sd read failed\r\n");
         return;
     }
+    while(BSP_SD_GetCardState() != SD_TRANSFER_OK);
     debug_info("sd read ok\r\n");
     
     if(Buffercmp(aTxBuffer, aRxBuffer, BUFFER_WORDS_SIZE) > 0)
