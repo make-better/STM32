@@ -26,7 +26,7 @@ uint8_t BSP_SD_Init(void)
     uSdHandle.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
     uSdHandle.Init.BusWide = SDIO_BUS_WIDE_1B;
     uSdHandle.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
-    uSdHandle.Init.ClockDiv = 16;
+    uSdHandle.Init.ClockDiv = 34;
     
     BSP_SD_MspInit(NULL);
     
@@ -159,6 +159,7 @@ uint8_t BSP_SD_WriteBlocks(uint32_t *pData, uint32_t WriteAddr, uint32_t NumOfBl
     {
         return MSD_OK;
     }
+//    return HAL_SD_WriteBlocks(&uSdHandle, (uint8_t*)pData, WriteAddr, NumOfBlocks, Timeout);
 }
 
 uint8_t BSP_SD_ReadBlocks_DMA(uint32_t *pData, uint32_t ReadAddr, uint32_t NumOfBlocks)

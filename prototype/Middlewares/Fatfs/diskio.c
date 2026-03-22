@@ -13,7 +13,9 @@
 /* Example: Declarations of the platform and disk functions in the project */
 #include "spi.h"
 #include "bsp_spi_flash.h"
+#include "bsp_sdio_sdcard.h"
 #include "cmsis_os.h"
+#include "string.h"
 
 /* Example: Mapping of physical drive number for each drive */
 #define DEV_MMC		0	/* Map MMC/SD card to physical drive 0 */
@@ -53,12 +55,22 @@ DSTATUS disk_status (
 		// translate the reslut code here
 		return stat;
 
-//	case DEV_MMC :
-//		result = MMC_disk_status();
+	case DEV_MMC :
+		do
+        {
+            if(0 == BSP_SD_GetCardState())
+            {
+                stat &= ~STA_NOINIT;
+                i = 5;
+            }
+            else
+            {
+                stat = STA_NOINIT;
+                i++;
+            }
+        }while(i < 5);
 
-//		// translate the reslut code here
-
-//		return stat;
+		return stat;
 
 //	case DEV_USB :
 //		result = USB_disk_status();
@@ -99,12 +111,18 @@ DSTATUS disk_initialize (
 
 		return stat;
 
-//	case DEV_MMC :
-//		result = MMC_disk_initialize();
+	case DEV_MMC :
+		result = BSP_SD_Init();
+        if(result)
+        {
+            stat = STA_NOINIT;
+        }
+		else
+        {
+            stat &= ~STA_NOINIT;
+        }
 
-//		// translate the reslut code here
-
-//		return stat;
+		return stat;
 
 //	case DEV_USB :
 //		result = USB_disk_initialize();
@@ -132,6 +150,7 @@ DRESULT disk_read (
 {
 	DRESULT res = RES_OK;
 	uint8_t result;
+    uint8_t timeout = 10;
 
 	switch (pdrv) {
 	case SPI_FLASH :
@@ -147,14 +166,25 @@ DRESULT disk_read (
 
 		return res;
 
-//	case DEV_MMC :
-//		// translate the arguments here
-
-//		result = MMC_disk_read(buff, sector, count);
-
-//		// translate the reslut code here
-
-//		return res;
+	case DEV_MMC :
+        if(BSP_SD_ReadBlocks((uint32_t *)buff, sector, count, 1000) == MSD_OK)
+        {
+            while(BSP_SD_GetCardState() != SD_TRANSFER_OK)
+            {
+                HAL_Delay(1);
+                timeout--;
+                if(timeout == 0)
+                {
+                    res = RES_ERROR;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            res = RES_ERROR;
+        }
+		return res;
 
 //	case DEV_USB :
 //		// translate the arguments here
@@ -185,9 +215,10 @@ DRESULT disk_write (
 	UINT count			/* Number of sectors to write */
 )
 {
-	DRESULT res;
+	DRESULT res = RES_OK;
 	uint8_t result;
     uint32_t w_addr;
+    uint8_t timeout = 10;
 	switch (pdrv) {
 	case SPI_FLASH :
 		// translate the arguments here
@@ -210,14 +241,26 @@ DRESULT disk_write (
 
 		return res;
 
-//	case DEV_MMC :
-//		// translate the arguments here
-
-//		result = MMC_disk_write(buff, sector, count);
-
-//		// translate the reslut code here
-
-//		return res;
+	case DEV_MMC :
+        result = BSP_SD_WriteBlocks((uint32_t *)buff, sector, count, 1000);
+        if(result == MSD_OK)
+        {
+            while(BSP_SD_GetCardState() != SD_TRANSFER_OK)
+            {
+                HAL_Delay(1);
+                timeout--;
+                if(timeout == 0)
+                {
+                    res = RES_ERROR;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            res = RES_ERROR;
+        }
+		return res;
 
 //	case DEV_USB :
 //		// translate the arguments here
@@ -249,6 +292,8 @@ DRESULT disk_ioctl (
 	DRESULT res;
 	int result;
     int i = 0;
+    BSP_SD_CardInfo card_info;
+    
 	switch (pdrv) {
 	case SPI_FLASH :
         switch(cmd)
@@ -288,11 +333,34 @@ DRESULT disk_ioctl (
         res = RES_OK;
 		return res;
 
-//	case DEV_MMC :
+	case DEV_MMC :
+        
+        switch(cmd)
+        {
+            case CTRL_SYNC:
+                res = RES_OK;
+                break;
+            case GET_SECTOR_COUNT:
+                BSP_SD_GetCardInfo(&card_info);
+                *(DWORD*)buff = card_info.LogBlockNbr;
+                res = RES_OK;
+                break;
+            case GET_SECTOR_SIZE:
+                BSP_SD_GetCardInfo(&card_info);
+                *(DWORD*)buff = card_info.LogBlockSize;
+                res = RES_OK;
+                break;
+            case GET_BLOCK_SIZE:
+                BSP_SD_GetCardInfo(&card_info);
+                *(DWORD*)buff = card_info.LogBlockSize;
+                res = RES_OK;
+                break;
+            default:
+                res = RES_PARERR;
+                break;
+        }
 
-//		// Process of the command for the MMC/SD card
-
-//		return res;
+		return res;
 
 //	case DEV_USB :
 

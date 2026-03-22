@@ -242,8 +242,8 @@ void StartTask03(void *argument)
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
 //    wwdg_config(127, 80, WWDG_PRESCALER_8);//42ms~57ms
     debug_info("start\r\n");
-    osDelay(1000);
-    SD_Test();
+    HAL_Delay(2000);
+    fatfs_test_sdcard();
   /* Infinite loop */
     for(;;)
     {

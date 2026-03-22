@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 #include "ff.h"
-uint8_t fatfs_test(void);
-
+uint8_t fatfs_test_flash(void);
+uint8_t fatfs_test_sdcard(void);
 
 #ifdef __cplusplus
 }
