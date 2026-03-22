@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "bsp_usart.h"
 #include "bsp_time_general.h"
+#include "bsp_sdio_sdcard.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -262,6 +263,11 @@ void DMA1_Channel5_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
 
   /* USER CODE END DMA1_Channel5_IRQn 1 */
+}
+
+void BSP_SD_IRQHandler(void)
+{
+    HAL_SD_IRQHandler(&uSdHandle);
 }
 
 void WWDG_IRQHandler(void)

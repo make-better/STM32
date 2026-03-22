@@ -1,10 +1,20 @@
 #include "bsp_sdio_sdcard.h"
+#include "bsp_usart.h"
+
+#define SDIO_DMA_DIR_WRITE      1
+#define SDIO_DMA_DIR_READ       0
 
 SD_HandleTypeDef uSdHandle;
 
 void BSP_SD_MspInit(void *params);
+DMA_HandleTypeDef hdma_sdio_tx;
+DMA_HandleTypeDef hdma_sdio_rx;
 
-
+uint8_t sdio_dma_dir;
+uint8_t sdio_dma_tx_end = 0;
+uint8_t sdio_dma_rx_end = 0;
+uint8_t sdio_tx_end = 0;
+uint8_t sdio_rx_end = 0;
     
 uint8_t BSP_SD_Init(void)
 {
@@ -36,6 +46,9 @@ uint8_t BSP_SD_Init(void)
             state = MSD_OK;
         }
     }
+    
+    HAL_NVIC_SetPriority(SDIO_IRQn, 2, 2);
+    HAL_NVIC_EnableIRQ(SDIO_IRQn);
     return state;
 }
 
@@ -63,25 +76,24 @@ void BSP_SD_MspInit(void *params)
 
 uint8_t SD_DMAConfigRx(SD_HandleTypeDef *hsd)
 {
-    static DMA_HandleTypeDef hdma_rx;
     HAL_StatusTypeDef   status = HAL_ERROR;
     
     if(hsd->hdmarx == NULL)
     {
-        hdma_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-        hdma_rx.Init.PeriphInc = DMA_PINC_DISABLE;
-        hdma_rx.Init.MemInc = DMA_MINC_ENABLE;
-        hdma_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-        hdma_rx.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-        hdma_rx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-        hdma_rx.Instance = SD_DMAx_Rx_INSTANCE;
+        hdma_sdio_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+        hdma_sdio_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+        hdma_sdio_rx.Init.MemInc = DMA_MINC_ENABLE;
+        hdma_sdio_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+        hdma_sdio_rx.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+        hdma_sdio_rx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+        hdma_sdio_rx.Instance = SD_DMAx_Rx_INSTANCE;
         
-        __HAL_LINKDMA(hsd, hdmarx, hdma_rx);
+        __HAL_LINKDMA(hsd, hdmarx, hdma_sdio_rx);
         //stop any ongoing transfer and reset the state
-        HAL_DMA_Abort(&hdma_rx);
-        HAL_DMA_DeInit(&hdma_rx);
+        HAL_DMA_Abort(&hdma_sdio_rx);
+        HAL_DMA_DeInit(&hdma_sdio_rx);
         
-        status = HAL_DMA_Init(&hdma_rx);
+        status = HAL_DMA_Init(&hdma_sdio_rx);
         
         HAL_NVIC_SetPriority(SD_DMAx_Rx_IRQn, 0x0D, 0);
         HAL_NVIC_EnableIRQ(SD_DMAx_Rx_IRQn);
@@ -95,25 +107,25 @@ uint8_t SD_DMAConfigRx(SD_HandleTypeDef *hsd)
 
 uint8_t SD_DMAConfigTx(SD_HandleTypeDef *hsd)
 {
-    static DMA_HandleTypeDef hdma_tx;
+    
     HAL_StatusTypeDef   status = HAL_ERROR;
     
     if(hsd->hdmatx == NULL)
     {
-        hdma_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-        hdma_tx.Init.PeriphInc = DMA_PINC_DISABLE;
-        hdma_tx.Init.MemInc = DMA_MINC_ENABLE;
-        hdma_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-        hdma_tx.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-        hdma_tx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-        hdma_tx.Instance = SD_DMAx_Tx_INSTANCE;
+        hdma_sdio_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+        hdma_sdio_tx.Init.PeriphInc = DMA_PINC_DISABLE;
+        hdma_sdio_tx.Init.MemInc = DMA_MINC_ENABLE;
+        hdma_sdio_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+        hdma_sdio_tx.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+        hdma_sdio_tx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+        hdma_sdio_tx.Instance = SD_DMAx_Tx_INSTANCE;
         
-        __HAL_LINKDMA(hsd, hdmatx, hdma_tx);
+        __HAL_LINKDMA(hsd, hdmatx, hdma_sdio_tx);
         //stop any ongoing transfer and reset the state
-        HAL_DMA_Abort(&hdma_tx);
-        HAL_DMA_DeInit(&hdma_tx);
+        HAL_DMA_Abort(&hdma_sdio_tx);
+        HAL_DMA_DeInit(&hdma_sdio_tx);
         
-        status = HAL_DMA_Init(&hdma_tx);
+        status = HAL_DMA_Init(&hdma_sdio_tx);
         
         HAL_NVIC_SetPriority(SD_DMAx_Tx_IRQn, 0x0D, 0);
         HAL_NVIC_EnableIRQ(SD_DMAx_Tx_IRQn);
@@ -153,6 +165,9 @@ uint8_t BSP_SD_ReadBlocks_DMA(uint32_t *pData, uint32_t ReadAddr, uint32_t NumOf
 {
     uint8_t state = MSD_OK;
     uSdHandle.hdmatx = NULL;
+    sdio_dma_dir = SDIO_DMA_DIR_READ;
+    sdio_dma_rx_end = 0;
+    sdio_rx_end = 0;
     
     state = SD_DMAConfigRx(&uSdHandle);
     
@@ -174,6 +189,9 @@ uint8_t BSP_SD_WriteBlocks_DMA(uint32_t *pData, uint32_t WriteAddr, uint32_t Num
 {
     uint8_t state = MSD_OK;
     uSdHandle.hdmarx = NULL;
+    sdio_dma_dir = SDIO_DMA_DIR_WRITE;
+    sdio_dma_tx_end = 0;
+    sdio_tx_end = 0;
     
     state = SD_DMAConfigTx(&uSdHandle);
     
@@ -213,6 +231,7 @@ void BSP_SD_GetCardInfo(HAL_SD_CardInfoTypeDef *CardInfo)
     HAL_SD_GetCardInfo(&uSdHandle, CardInfo);
 }
 
+
 /**
   * @brief SD Abort callbacks
   * @param hsd: SD handle
@@ -220,7 +239,7 @@ void BSP_SD_GetCardInfo(HAL_SD_CardInfoTypeDef *CardInfo)
   */
 void HAL_SD_AbortCallback(SD_HandleTypeDef *hsd)
 {
-  BSP_SD_AbortCallback();
+    BSP_SD_AbortCallback();
 }
 
 /**
@@ -230,7 +249,7 @@ void HAL_SD_AbortCallback(SD_HandleTypeDef *hsd)
   */
 void HAL_SD_TxCpltCallback(SD_HandleTypeDef *hsd)
 {
-  BSP_SD_WriteCpltCallback();
+    BSP_SD_WriteCpltCallback();
 }
 
 /**
@@ -240,7 +259,7 @@ void HAL_SD_TxCpltCallback(SD_HandleTypeDef *hsd)
   */
 void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd)
 {
-  BSP_SD_ReadCpltCallback();
+    BSP_SD_ReadCpltCallback();
 }
 
 /**
@@ -258,7 +277,17 @@ __weak void BSP_SD_AbortCallback(void)
   */
 __weak void BSP_SD_WriteCpltCallback(void)
 {
-
+//    if(sdio_tx_end == 0)
+//    {
+//        sdio_tx_end = 1;
+//        if(sdio_dma_tx_end == 1)
+//        {
+//            sdio_dma_tx_end = 0;
+            HAL_DMA_Abort_IT(&hdma_sdio_tx);
+            __HAL_DMA_DISABLE(&hdma_sdio_tx);
+            uSdHandle.hdmatx = NULL;
+//        }
+//    }
 }
 
 /**
@@ -267,5 +296,49 @@ __weak void BSP_SD_WriteCpltCallback(void)
   */
 __weak void BSP_SD_ReadCpltCallback(void)
 {
+//    if(sdio_rx_end == 0)
+//    {
+//        sdio_rx_end = 1;
+//        if(sdio_dma_rx_end == 1)
+//        {
+//            sdio_dma_rx_end = 0;
+            HAL_DMA_Abort_IT(&hdma_sdio_rx);
+            __HAL_DMA_DISABLE(&hdma_sdio_rx);
+            uSdHandle.hdmarx = NULL;
+//        }
+//    }
+}
 
+
+void SD_DMAx_IRQHandler(void)
+{
+    if(sdio_dma_dir == SDIO_DMA_DIR_READ)
+    {
+//        if(sdio_dma_rx_end == 0)
+//        {
+//            sdio_dma_rx_end = 1;
+//            if(sdio_rx_end == 1)
+//            {
+//                sdio_rx_end = 0;
+//                HAL_DMA_Abort_IT(&hdma_sdio_rx);
+//                __HAL_DMA_DISABLE(&hdma_sdio_rx);
+//            }
+//        }
+        HAL_DMA_IRQHandler(&hdma_sdio_rx);
+    }
+    else
+    {
+//        if(sdio_dma_tx_end == 0)
+//        {
+//            sdio_dma_tx_end = 1;
+//            if(sdio_tx_end == 1)
+//            {
+//                sdio_tx_end = 0;
+//                HAL_DMA_Abort_IT(&hdma_sdio_tx);
+//                __HAL_DMA_DISABLE(&hdma_sdio_tx);
+//            }
+//        }
+        HAL_DMA_IRQHandler(&hdma_sdio_tx);
+    }
+    
 }

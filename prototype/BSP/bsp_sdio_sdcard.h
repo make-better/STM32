@@ -28,10 +28,12 @@ extern "C" {
 #define SD_DMAx_Tx_IRQn             DMA2_Channel4_5_IRQn
 #define SD_DMAx_Rx_IRQn             DMA2_Channel4_5_IRQn
 #define BSP_SD_IRQHandler           SDIO_IRQHandler
-#define SD_DMAx_Tx_IRQHandler       DMA2_Channel4_5_IRQHandler
-#define SD_DMAx_Rx_IRQHandler       DMA2_Channel4_5_IRQHandler
+#define SD_DMAx_IRQHandler          DMA2_Channel4_5_IRQHandler
 
+extern DMA_HandleTypeDef hdma_sdio_tx;
+extern DMA_HandleTypeDef hdma_sdio_rx;
 
+extern SD_HandleTypeDef uSdHandle;
 
 uint8_t BSP_SD_Init(void);
 uint8_t BSP_SD_ReadBlocks(uint32_t *pData, uint32_t ReadAddr, uint32_t NumOfBlocks, uint32_t Timeout);

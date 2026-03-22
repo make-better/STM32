@@ -17,6 +17,7 @@ static uint8_t Buffercmp(uint32_t* pBuffer1, uint32_t* pBuffer2, uint16_t Buffer
 void SD_Test(void)
 {
     uint8_t sd_state = MSD_OK;
+    uint8_t ret = 0;
     
     sd_state = BSP_SD_Init();
     if(sd_state != MSD_OK)
@@ -37,25 +38,67 @@ void SD_Test(void)
     }
     debug_info("sd erase ok\r\n");
     Fill_Buffer(aTxBuffer, BUFFER_WORDS_SIZE, 0x22ff);
-    sd_state = BSP_SD_WriteBlocks(aTxBuffer, BLOCK_START_ADDR, NUM_OF_BLOCKS, 1000);
+    sd_state = BSP_SD_WriteBlocks_DMA(aTxBuffer, BLOCK_START_ADDR, NUM_OF_BLOCKS);
     
     if(sd_state != MSD_OK)
     {
         debug_info("sd write failed\r\n");
         return;
     }
-    while(BSP_SD_GetCardState() != SD_TRANSFER_OK);
     debug_info("sd write ok\r\n");
+    do 
+    {
+        ret = BSP_SD_GetCardState();
+        HAL_Delay(1);
+    }while(ret != SD_TRANSFER_OK);
     
-    sd_state = BSP_SD_ReadBlocks(aRxBuffer, BLOCK_START_ADDR, NUM_OF_BLOCKS, 10);
+    sd_state = BSP_SD_ReadBlocks_DMA(aRxBuffer, BLOCK_START_ADDR, NUM_OF_BLOCKS);
     
     if(sd_state != MSD_OK)
     {
         debug_info("sd read failed\r\n");
         return;
     }
-    while(BSP_SD_GetCardState() != SD_TRANSFER_OK);
     debug_info("sd read ok\r\n");
+    while(BSP_SD_GetCardState() != SD_TRANSFER_OK)
+    {
+        HAL_Delay(1);
+    }
+    
+    if(Buffercmp(aTxBuffer, aRxBuffer, BUFFER_WORDS_SIZE) > 0)
+    {
+        debug_info("sd compare failed\r\n");
+        return;
+    }
+    debug_info("sd compare ok\r\n");
+    
+    Fill_Buffer(aTxBuffer, BUFFER_WORDS_SIZE, 0x3399);
+    sd_state = BSP_SD_WriteBlocks_DMA(aTxBuffer, BLOCK_START_ADDR, NUM_OF_BLOCKS);
+    
+    if(sd_state != MSD_OK)
+    {
+        debug_info("sd write failed\r\n");
+        return;
+    }
+    debug_info("sd write ok\r\n");
+    do 
+    {
+        ret = BSP_SD_GetCardState();
+        HAL_Delay(1);
+    }while(ret != SD_TRANSFER_OK);
+    
+    sd_state = BSP_SD_ReadBlocks_DMA(aRxBuffer, BLOCK_START_ADDR, NUM_OF_BLOCKS);
+    
+    if(sd_state != MSD_OK)
+    {
+        debug_info("sd read failed\r\n");
+        return;
+    }
+    debug_info("sd read ok\r\n");
+    while(BSP_SD_GetCardState() != SD_TRANSFER_OK)
+    {
+        HAL_Delay(1);
+    }
     
     if(Buffercmp(aTxBuffer, aRxBuffer, BUFFER_WORDS_SIZE) > 0)
     {
