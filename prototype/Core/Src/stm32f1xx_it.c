@@ -25,6 +25,7 @@
 #include "bsp_usart.h"
 #include "bsp_time_general.h"
 #include "bsp_sdio_sdcard.h"
+#include "bsp_dac.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,6 +67,7 @@ extern DMA_HandleTypeDef DMA_UART1_RX_Handle;
 extern DMA_HandleTypeDef hdma_adcx1;
 extern TIM_HandleTypeDef htimx6;
 extern WWDG_HandleTypeDef hwwdg;
+extern DMA_HandleTypeDef hdma_dac;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -263,6 +265,12 @@ void DMA1_Channel5_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
 
   /* USER CODE END DMA1_Channel5_IRQn 1 */
+}
+
+void DMA2_Channel4_5_IRQHandler(void)
+{
+//    sdio_dma_irq_handler();
+    HAL_DMA_IRQHandler(&hdma_dac);
 }
 
 void BSP_SD_IRQHandler(void)

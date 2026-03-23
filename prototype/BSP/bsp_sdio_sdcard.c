@@ -310,36 +310,14 @@ __weak void BSP_SD_ReadCpltCallback(void)
 //    }
 }
 
-
-void SD_DMAx_IRQHandler(void)
+void sdio_dma_irq_handler(void)
 {
     if(sdio_dma_dir == SDIO_DMA_DIR_READ)
     {
-//        if(sdio_dma_rx_end == 0)
-//        {
-//            sdio_dma_rx_end = 1;
-//            if(sdio_rx_end == 1)
-//            {
-//                sdio_rx_end = 0;
-//                HAL_DMA_Abort_IT(&hdma_sdio_rx);
-//                __HAL_DMA_DISABLE(&hdma_sdio_rx);
-//            }
-//        }
         HAL_DMA_IRQHandler(&hdma_sdio_rx);
     }
     else
     {
-//        if(sdio_dma_tx_end == 0)
-//        {
-//            sdio_dma_tx_end = 1;
-//            if(sdio_tx_end == 1)
-//            {
-//                sdio_tx_end = 0;
-//                HAL_DMA_Abort_IT(&hdma_sdio_tx);
-//                __HAL_DMA_DISABLE(&hdma_sdio_tx);
-//            }
-//        }
         HAL_DMA_IRQHandler(&hdma_sdio_tx);
     }
-    
 }

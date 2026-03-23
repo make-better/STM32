@@ -46,6 +46,8 @@ void BSP_SD_GetCardInfo(HAL_SD_CardInfoTypeDef *CardInfo);
 void BSP_SD_AbortCallback(void);
 void BSP_SD_WriteCpltCallback(void);
 void BSP_SD_ReadCpltCallback(void);
+
+void sdio_dma_irq_handler(void);
 #ifdef __cplusplus
 }
 #endif
