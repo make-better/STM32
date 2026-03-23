@@ -41,6 +41,7 @@
 #include "bsp_sdio_sdcard.h"
 #include "sdio_test.h"
 #include "bsp_dac.h"
+#include "sleep_mode_test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -242,14 +243,13 @@ void StartTask03(void *argument)
   /* USER CODE BEGIN StartTask03 */
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
 //    wwdg_config(127, 80, WWDG_PRESCALER_8);//42ms~57ms
-    dac_sin_test();
     debug_info("start\r\n");
     HAL_Delay(2000);
   /* Infinite loop */
     for(;;)
     {
         osDelay(1000);
-        HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
+//        HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
     }
   /* USER CODE END StartTask03 */
 }

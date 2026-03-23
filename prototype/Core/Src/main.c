@@ -38,6 +38,7 @@
 #include "bsp_time_general.h"
 #include "bsp_tpad.h"
 #include "sdio_test.h"
+#include "sleep_mode_test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -120,7 +121,8 @@ int main(void)
 //advanced_tim_pwm_output_test();
     
 //    adc_double_init();
-
+//    sleep_mode_wfi_test();
+    stop_mode_test();
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -129,7 +131,7 @@ int main(void)
 
   /* Start scheduler */
   osKernelStart();
-
+    
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
