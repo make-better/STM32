@@ -243,6 +243,7 @@ void StartTask03(void *argument)
   /* USER CODE BEGIN StartTask03 */
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
 //    wwdg_config(127, 80, WWDG_PRESCALER_8);//42ms~57ms
+    standby_mode_test();
     debug_info("start\r\n");
     HAL_Delay(2000);
   /* Infinite loop */

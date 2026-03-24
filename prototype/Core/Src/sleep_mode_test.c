@@ -6,6 +6,7 @@
 extern UART_HandleTypeDef huart1;
 uint8_t rx_buffer;
 
+//任意中断可唤醒
 uint8_t sleep_mode_wfi_test(void)
 {
     EXTI_Key_Config();
@@ -49,6 +50,7 @@ static void sysclk_config_stop(void)
     }
 }
 
+//仅EXIT可唤醒
 uint8_t stop_mode_test(void)
 {
     uint32_t sysclk_fre = 0, hclk_fre = 0, pclk1_fre = 0, pclk2_fre = 0, sysclk_sorce = 0;
@@ -85,5 +87,36 @@ uint8_t stop_mode_test(void)
     
     debug_info("after config clk status:\r\n");
     debug_info("sysclk:%d,\r\nhclk:%d,\r\npclk1:%d,\r\npck2:%d,\r\nclock source:%d(0:HSI 8:PLLCLK)\r\n",sysclk_fre,hclk_fre,pclk1_fre,pclk2_fre,sysclk_sorce);
+    return 0;
+}
+
+//WAKEUP引脚上升沿唤醒
+uint8_t standby_mode_test(void)
+{
+    if(__HAL_PWR_GET_FLAG(PWR_FLAG_SB) == SET)
+    {
+        __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+        HAL_GPIO_WritePin(LED_R_GPIO_Port, LED_R_Pin, 0);
+        debug_info("standby wake up reset \r\n");
+    }
+    else
+    {
+        HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, 0);
+        debug_info("normal reset \r\n");
+    }
+    HAL_Delay(2000);
+    debug_info("entry standby mode\r\n");
+    HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, 0);
+    HAL_Delay(1000);
+    HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, 1);
+    HAL_Delay(1000);
+    HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, 0);
+    HAL_Delay(1000);
+    //消除WU状态位
+    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+    //使能WKUP引脚的唤醒功能
+    HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
+    //进入待机模式
+    HAL_PWR_EnterSTANDBYMode();
     return 0;
 }

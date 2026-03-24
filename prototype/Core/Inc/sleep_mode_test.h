@@ -5,5 +5,5 @@
 
 uint8_t sleep_mode_wfi_test(void);
 uint8_t stop_mode_test(void);
-
+uint8_t standby_mode_test(void);
 #endif
