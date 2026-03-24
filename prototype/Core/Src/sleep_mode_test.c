@@ -3,6 +3,9 @@
 #include "bsp_usart.h"
 #include "main.h"
 
+extern UART_HandleTypeDef huart1;
+uint8_t rx_buffer;
+
 uint8_t sleep_mode_wfi_test(void)
 {
     EXTI_Key_Config();

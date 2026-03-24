@@ -121,8 +121,8 @@ int main(void)
 //advanced_tim_pwm_output_test();
     
 //    adc_double_init();
-//    sleep_mode_wfi_test();
-    stop_mode_test();
+    sleep_mode_wfi_test();
+//    stop_mode_test();
   /* USER CODE END 2 */
 
   /* Init scheduler */

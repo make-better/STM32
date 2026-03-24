@@ -34,6 +34,7 @@ void The_UART_Callback(UART_HandleTypeDef *huart)
     {
         temp = huart->Instance->DR;
         Led_Ctrl(temp);
+        HAL_UART_Transmit(huart, &temp, 1, 10);
     }
     __HAL_UART_CLEAR_PEFLAG(huart);
 }
