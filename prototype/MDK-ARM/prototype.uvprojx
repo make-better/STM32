@@ -2062,6 +2062,11 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\bsp_dac.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_pvd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\bsp_pvd.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

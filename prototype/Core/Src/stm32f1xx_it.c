@@ -278,6 +278,11 @@ void BSP_SD_IRQHandler(void)
     HAL_SD_IRQHandler(&uSdHandle);
 }
 
+void PVD_IRQHandler(void)
+{
+    HAL_PWR_PVD_IRQHandler();
+}
+
 void WWDG_IRQHandler(void)
 {
     HAL_WWDG_IRQHandler(&hwwdg);
