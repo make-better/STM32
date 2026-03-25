@@ -26,6 +26,7 @@
 #include "bsp_time_general.h"
 #include "bsp_sdio_sdcard.h"
 #include "bsp_dac.h"
+#include "bsp_rtc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -68,6 +69,7 @@ extern DMA_HandleTypeDef hdma_adcx1;
 extern TIM_HandleTypeDef htimx6;
 extern WWDG_HandleTypeDef hwwdg;
 extern DMA_HandleTypeDef hdma_dac;
+extern RTC_HandleTypeDef hrtc;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -288,4 +290,8 @@ void WWDG_IRQHandler(void)
     HAL_WWDG_IRQHandler(&hwwdg);
 }
 
+void RTC_Alarm_IRQHandler(void)
+{
+    HAL_RTC_AlarmIRQHandler(&hrtc);
+}
 /* USER CODE END 1 */

@@ -43,6 +43,7 @@
 #include "bsp_dac.h"
 #include "sleep_mode_test.h"
 #include "bsp_pvd.h"
+#include "bsp_rtc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -244,7 +245,7 @@ void StartTask03(void *argument)
   /* USER CODE BEGIN StartTask03 */
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
 //    wwdg_config(127, 80, WWDG_PRESCALER_8);//42ms~57ms
-    pvd_config();
+    rtc_test();
     debug_info("start\r\n");
     HAL_Delay(2000);
   /* Infinite loop */
