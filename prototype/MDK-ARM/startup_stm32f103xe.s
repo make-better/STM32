@@ -145,8 +145,11 @@ Reset_Handler   PROC
                 EXPORT  Reset_Handler             [WEAK]
                 IMPORT  __main
                 IMPORT  SystemInit
+                IMPORT  SRAM_GPIO_TEST
                 LDR     R0, =SystemInit
                 BLX     R0               
+                LDR     R0, =SRAM_GPIO_TEST
+                BLX      R0
                 LDR     R0, =__main
                 BX      R0
                 ENDP

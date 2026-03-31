@@ -236,7 +236,7 @@ void Delay(__IO uint32_t nCount)
 * @retval None
 */
 
-//uint8_t buff[1024] = {0};
+uint8_t the_value = {0};
 
 /* USER CODE END Header_StartTask03 */
 void StartTask03(void *argument)
@@ -245,8 +245,9 @@ void StartTask03(void *argument)
   /* USER CODE BEGIN StartTask03 */
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
 //    wwdg_config(127, 80, WWDG_PRESCALER_8);//42ms~57ms
-    rtc_test();
-    debug_info("start\r\n");
+//    rtc_test();
+    debug_info("the_value:addr:0x%x  v:0x%x\r\n",&the_value,the_value);
+    debug_info("size:addr:0x%x  v:0x%x\r\n",&size,size);
     HAL_Delay(2000);
   /* Infinite loop */
     for(;;)

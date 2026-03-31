@@ -355,10 +355,10 @@
             <useXO>0</useXO>
             <ClangAsOpt>1</ClangAsOpt>
             <VariousControls>
-              <MiscControls>SDIO</MiscControls>
+              <MiscControls></MiscControls>
               <Define></Define>
-              <Undefine></Undefine>
-              <IncludePath>../Core/Inc</IncludePath>
+              <Undefine>../Core/Inc</Undefine>
+              <IncludePath></IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -371,7 +371,7 @@
             <TextAddressRange></TextAddressRange>
             <DataAddressRange></DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile></ScatterFile>
+            <ScatterFile>prototype\prototype.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -932,6 +932,11 @@
               <FileName>sleep_mode_test.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\Src\sleep_mode_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>sram_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\sram_test.c</FilePath>
             </File>
           </Files>
         </Group>
