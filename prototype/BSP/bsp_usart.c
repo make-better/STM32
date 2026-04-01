@@ -6,15 +6,16 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
-// 禁用半主机模式
-__asm(".global __use_no_semihosting\n\t");
-// 禁用命令行
-__asm(".global __ARM_use_no_argv \n\t");
+//// 禁用半主机模式
+//__asm(".global __use_no_semihosting\n\t");
+//// 禁用命令行
+//__asm(".global __ARM_use_no_argv \n\t");
 
-void _sys_exit(int x) 
-{ 
-    x = x; 
-}
+//void _sys_exit(int x) 
+//{ 
+//    x = x; 
+//}
+
 
 static SemaphoreHandle_t printf_mutex = NULL;
 
@@ -80,10 +81,6 @@ void debug_info(const char *format, ...)
     }
 }
 
-//void _sys_exit(int x) {
-//    x = x;
-//    while(1);
-//}
 
 //int fputc(int ch, FILE *f)
 //{

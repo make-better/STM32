@@ -10,11 +10,11 @@ LR_IROM1 0x08000000 0x00080000  {    ; load region size_region
    .ANY (+XO)
   }
   RW_IRAM1 0x20000000 0x00005000  {  ; RW data
-   *.o(STACK)
-;   .ANY (+RW +ZI)
-  }
-  RW_IRAM2 0x20005000 0x00007000  {  ; RW data
    .ANY (+RW +ZI)
+  }
+  RW_IRAM2 0x20005000 0x00007000  {  ; 指定存储空间
+   *.o(HEAP) ;选择堆区
+	   .ANY(EXRAM)	;选择exram节区
   }
 }
 

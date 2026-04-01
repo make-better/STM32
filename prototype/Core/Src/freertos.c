@@ -44,6 +44,7 @@
 #include "sleep_mode_test.h"
 #include "bsp_pvd.h"
 #include "bsp_rtc.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -236,7 +237,6 @@ void Delay(__IO uint32_t nCount)
 * @retval None
 */
 
-uint8_t the_value = {0};
 
 /* USER CODE END Header_StartTask03 */
 void StartTask03(void *argument)
@@ -246,8 +246,6 @@ void StartTask03(void *argument)
     size = uxTaskGetStackHighWaterMark(myTask03Handle);
 //    wwdg_config(127, 80, WWDG_PRESCALER_8);//42ms~57ms
 //    rtc_test();
-    debug_info("the_value:addr:0x%x  v:0x%x\r\n",&the_value,the_value);
-    debug_info("size:addr:0x%x  v:0x%x\r\n",&size,size);
     HAL_Delay(2000);
   /* Infinite loop */
     for(;;)

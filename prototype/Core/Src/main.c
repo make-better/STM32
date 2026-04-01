@@ -39,6 +39,7 @@
 #include "bsp_tpad.h"
 #include "sdio_test.h"
 #include "sleep_mode_test.h"
+#include "sram_test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -108,6 +109,8 @@ int main(void)
     
   MX_USART1_UART_Init();
   DMA_UART1_Config();
+  
+    sram_ver_section_test();
 //  MX_I2C1_Init();
 //    I2C_By_GPIO_Init();
 //    tpad_init();
@@ -126,11 +129,11 @@ int main(void)
   /* USER CODE END 2 */
 
   /* Init scheduler */
-  osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
-  MX_FREERTOS_Init();
+//  osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
+//  MX_FREERTOS_Init();
 
-  /* Start scheduler */
-  osKernelStart();
+//  /* Start scheduler */
+//  osKernelStart();
     
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */

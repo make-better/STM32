@@ -1,6 +1,19 @@
 #include "sram_test.h"
-#include "stm32f1xx_hal.h"
 #include "main.h"
+#include "bsp_usart.h"
+#include "stdlib.h"
+
+//定义变量到指定节区
+#define __EXRAM __attribute__ ((section("EXRAM")))
+
+//__asm(".global __use_no_semihosting\n\t");
+
+uint32_t exram_value __EXRAM = 8;
+
+//void _ttywrch(int ch)
+//{
+//    ch = ch;
+//}
 
 void SRAM_GPIO_TEST(void)
 {
@@ -16,8 +29,25 @@ void SRAM_GPIO_TEST(void)
 
 }
 
-
-
+/* 节区自定义测试 */
+void sram_ver_section_test(void)
+{
+    uint32_t stack_value = 3;
+    uint32_t *heap_point = malloc(sizeof(uint32_t) * 3);
+    
+    heap_point[0] = 1;
+    heap_point[1] = 2;
+    heap_point[2] = 3;
+    
+    debug_info("exram_value:addr:0x%x  v:0x%x\r\n",&exram_value,exram_value);
+    debug_info("stack_value:addr:0x%x  v:0x%x\r\n",&stack_value,stack_value);
+    debug_info("heap_point:addr:0x%x  v:0x%x\r\n",heap_point,*heap_point);
+    heap_point++;
+    debug_info("heap_point++:addr:0x%x  v:0x%x\r\n",heap_point,*heap_point);
+    heap_point--;
+    debug_info("heap_point--:addr:0x%x  v:0x%x\r\n",heap_point,*heap_point);
+    free(heap_point);
+}
 
 
 
