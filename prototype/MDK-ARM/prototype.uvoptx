@@ -186,22 +186,6 @@
           <ExecCommand></ExecCommand>
           <Expression>\\prototype\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rtc.c\1407</Expression>
         </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>36</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134246500</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Core\Src\sram_test.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\prototype\../Core/Src/sram_test.c\36</Expression>
-        </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
