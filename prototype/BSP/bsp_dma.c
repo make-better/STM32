@@ -1,13 +1,14 @@
 #include "bsp_dma.h"
 #include "stdio.h"
 #include "main.h"
-
+#include "bsp_usart.h"
 DMA_HandleTypeDef DMA_Handle;
 DMA_HandleTypeDef DMA_UART1_TX_Handle;
 DMA_HandleTypeDef DMA_UART1_RX_Handle;
 
 
 extern UART_HandleTypeDef huart1;
+extern uint8_t rx_buff[UART1_BUFFER_SIZE];
 
 const uint32_t aSRC_Const_Buffer[BUFFER_SIZE] = {
     0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
@@ -89,7 +90,7 @@ void DMA_UART1_Config(void)
     DMA_UART1_RX_Handle.Init.MemInc = DMA_MINC_ENABLE;
     DMA_UART1_RX_Handle.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     DMA_UART1_RX_Handle.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    DMA_UART1_RX_Handle.Init.Mode = DMA_NORMAL;
+    DMA_UART1_RX_Handle.Init.Mode = DMA_CIRCULAR;
     DMA_UART1_RX_Handle.Init.Priority = DMA_PRIORITY_MEDIUM;
     
     if (HAL_DMA_Init(&DMA_UART1_RX_Handle) != HAL_OK)
@@ -98,7 +99,8 @@ void DMA_UART1_Config(void)
     }
     __HAL_LINKDMA(&huart1, hdmarx, DMA_UART1_RX_Handle);
     
-  
+    HAL_UART_Receive_DMA(&huart1, rx_buff, UART1_BUFFER_SIZE);
+    
     HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 1, 1);
     HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 }

@@ -20,23 +20,40 @@ void _sys_exit(int x)
 static SemaphoreHandle_t printf_mutex = NULL;
 
 extern UART_HandleTypeDef huart1;
+extern DMA_HandleTypeDef DMA_UART1_RX_Handle;
 void Led_Ctrl(uint8_t c);
-static uint8_t rx_buff[100] = {0};
 
-#define UART1_BUFFER_SIZE 100
+
+uint8_t rx_buff[UART1_BUFFER_SIZE] = {0};
+
+
 uint8_t uart1_tx_buffer[UART1_BUFFER_SIZE] = {0};
 uint8_t uart1_rx_buffer[UART1_BUFFER_SIZE] = {0};
 
 
 void The_UART_Callback(UART_HandleTypeDef *huart)
 {
-    uint8_t temp = 0;
-    if(__HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE))
+//    uint8_t temp = 0;
+//    if(__HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE))
+//    {
+//        temp = huart->Instance->DR;
+//        Led_Ctrl(temp);
+//        HAL_UART_Transmit(huart, &temp, 1, 10);
+//    }
+    
+    if(__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE))
     {
-        temp = huart->Instance->DR;
-        Led_Ctrl(temp);
-        HAL_UART_Transmit(huart, &temp, 1, 10);
+        __HAL_UART_CLEAR_IDLEFLAG(huart);
+        
+        HAL_UART_DMAStop(huart);
+        int16_t rx_len = UART1_BUFFER_SIZE - __HAL_DMA_GET_COUNTER(&DMA_UART1_RX_Handle);
+        if(rx_len > 0)
+        {
+            memcpy(uart1_rx_buffer, rx_buff, rx_len);
+        }
+        HAL_UART_Receive_DMA(&huart1, rx_buff, UART1_BUFFER_SIZE);
     }
+    
     __HAL_UART_CLEAR_PEFLAG(huart);
 }
 

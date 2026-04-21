@@ -7,6 +7,7 @@ extern "C" {
 
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_cortex.h"
+#define UART1_BUFFER_SIZE 100
 
 void The_UART_Callback(UART_HandleTypeDef *huart);
 
