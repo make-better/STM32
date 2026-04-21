@@ -2087,6 +2087,11 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\bsp_rtc.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_internal_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\bsp_internal_flash.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

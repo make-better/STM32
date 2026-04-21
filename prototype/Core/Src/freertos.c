@@ -251,7 +251,7 @@ void StartTask03(void *argument)
     for(;;)
     {
         osDelay(1000);
-//        HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
+        HAL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
     }
   /* USER CODE END StartTask03 */
 }
