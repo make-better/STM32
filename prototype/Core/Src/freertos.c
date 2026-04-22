@@ -44,6 +44,7 @@
 #include "sleep_mode_test.h"
 #include "bsp_pvd.h"
 #include "bsp_rtc.h"
+#include "bsp_internal_flash.h"
 
 /* USER CODE END Includes */
 
