@@ -2092,6 +2092,11 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\bsp_internal_flash.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_readWriteProtect.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\bsp_readWriteProtect.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
