@@ -45,7 +45,7 @@
 #include "bsp_pvd.h"
 #include "bsp_rtc.h"
 #include "bsp_internal_flash.h"
-
+#include "bsp_readWriteProtect.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

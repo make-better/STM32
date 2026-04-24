@@ -136,8 +136,10 @@ extern "C" {
 #define ADDR_FLASH_PAGE_125   ((uint32_t)0x0801F400) /* Base @ of Page 125, 1 Kbytes */
 #define ADDR_FLASH_PAGE_126   ((uint32_t)0x0801F800) /* Base @ of Page 126, 1 Kbytes */
 #define ADDR_FLASH_PAGE_127   ((uint32_t)0x0801FC00) /* Base @ of Page 127, 1 Kbytes */
-
-
+#define ADDR_FLASH_PAGE_254   ((uint32_t)0x0807F000) /* Base @ of Page 254, 2 Kbytes */
+#define ADDR_FLASH_PAGE_255   ((uint32_t)0x0807F800) /* Base @ of Page 255, 2 Kbytes */
+uint8_t Flash_RW_Protect_Test(void);
+void Flash_Write_Proection_Disable(void);
 #ifdef __cplusplus
 }
 #endif
